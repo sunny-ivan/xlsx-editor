@@ -6,6 +6,9 @@
     "type": "git",
     "url": "https://github.com/sunny-ivan/xlsx-editor.git"
   },
+  "engines": {
+    "yarn": "^4.1.1"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
