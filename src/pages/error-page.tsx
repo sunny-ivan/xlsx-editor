@@ -1,5 +1,6 @@
 import { isRouteErrorResponse } from "react-router-dom";
 import "./error-page.css";
+import { Typography } from "@mui/material";
 
 function errorMessage(error: unknown): string {
   if (isRouteErrorResponse(error)) {
@@ -24,11 +25,12 @@ export default function ChildComponent(props: ChildProps) {
 
   return (
     <div id="error-page">
-      <h1>Oops!</h1>
-      <p>Something went wrong.</p>
-      <p>
+      <Typography variant="h4" color="error">
+        Oops! Something went wrong.
+      </Typography>
+      <Typography variant="body1">
         <i>{errorMessage(error)}</i>
-      </p>
+      </Typography>
     </div>
   );
 }
