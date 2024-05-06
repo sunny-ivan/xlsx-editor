@@ -24,11 +24,16 @@ function Logout() {
   };
 
   useEffect(() => {
-    pca.initialize().then(() => {
-      if (pca.getAllAccounts().length <= 0) {
-        navigate("/login");
-      }
-    });
+    pca
+      .initialize()
+      .then(() => {
+        return pca.handleRedirectPromise();
+      })
+      .then(() => {
+        if (pca.getAllAccounts().length <= 0) {
+          navigate("/login");
+        }
+      });
   });
 
   return (

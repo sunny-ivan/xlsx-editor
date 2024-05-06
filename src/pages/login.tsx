@@ -3,6 +3,8 @@ import { Typography, Button, Grid, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import { ReactComponent as MicrosoftSvg } from "../assets/microsoft.svg";
 import { useNavigate } from "react-router-dom";
+import { Providers, ProviderState } from "@microsoft/mgt-react";
+import { login } from "../services/auth/utils";
 
 function Login() {
   const { instance: pca } = useMsal();
@@ -13,12 +15,8 @@ function Login() {
   const handleSignIn = async () => {
     try {
       setLoading(true);
-      const loginRequest = {
-        scopes: ["Files.ReadWrite.AppFolder"],
-        redirectStartPage: window.location.href,
-      };
-
-      await pca.loginRedirect(loginRequest);
+      Providers.globalProvider.setState(ProviderState.Loading);
+      login();
     } catch (error) {
       console.log("Login error:", error);
     }
@@ -33,6 +31,7 @@ function Login() {
       .then(() => {
         setLoading(false);
         if (pca.getAllAccounts().length > 0) {
+          Providers.globalProvider.setState(ProviderState.SignedIn);
           navigate("/choose");
         }
       });
