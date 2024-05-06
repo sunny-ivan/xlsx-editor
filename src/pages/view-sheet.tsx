@@ -2,7 +2,7 @@ import { useMsal } from "@azure/msal-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function FileView() {
+function ViewSheet() {
   const { instance: pca } = useMsal();
   const navigate = useNavigate();
 
@@ -14,7 +14,7 @@ function FileView() {
     });
   });
 
-  return <div>FileView</div>;
+  return <div>SheetView</div>;
 }
 
-export default FileView;
+export default ViewSheet;
