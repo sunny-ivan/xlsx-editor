@@ -1,26 +1,34 @@
 import { storagePrefix } from "../../config";
 
 interface IPreferDocument {
-  ItemId: string;
-  WorkbookId: string;
+  driverId: string;
+  itemId: string;
+  workbookId: string;
 }
 
 export function hasPreferDocument() {
   return (
+    localStorage.getItem(storagePrefix + "driverid") !== null &&
     localStorage.getItem(storagePrefix + "itemid") !== null &&
     localStorage.getItem(storagePrefix + "workbookid") !== null
   );
 }
 
 export function setPreferDocument(preferences: IPreferDocument) {
-  localStorage.setItem(storagePrefix + "itemid", preferences.ItemId);
-  localStorage.setItem(storagePrefix + "workbookid", preferences.WorkbookId);
+  localStorage.setItem(storagePrefix + "driverid", preferences.driverId);
+  localStorage.setItem(storagePrefix + "itemid", preferences.itemId);
+  localStorage.setItem(storagePrefix + "workbookid", preferences.workbookId);
 }
 
 export function getPreferDocument(): IPreferDocument {
-  let ItemId = localStorage.getItem(storagePrefix + "itemid");
-  ItemId = ItemId === null ? "" : ItemId;
-  let WorkbookId = localStorage.getItem(storagePrefix + "workbookid");
-  WorkbookId = WorkbookId === null ? "" : WorkbookId;
-  return { ItemId, WorkbookId };
+  let driverId = localStorage.getItem(storagePrefix + "itemid");
+  driverId = driverId === null ? "" : driverId;
+
+  let itemId = localStorage.getItem(storagePrefix + "itemid");
+  itemId = itemId === null ? "" : itemId;
+
+  let workbookId = localStorage.getItem(storagePrefix + "workbookid");
+  workbookId = workbookId === null ? "" : workbookId;
+
+  return { driverId, itemId, workbookId };
 }
