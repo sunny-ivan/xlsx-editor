@@ -15,6 +15,7 @@ import {
   Select,
   SelectChangeEvent,
   Skeleton,
+  Stack,
   TextField,
 } from "@mui/material";
 import { getWorkbooks } from "../services/workbooks/workbooks";
@@ -201,14 +202,24 @@ function ChooseWorksheet() {
               </FormControl>
             )}
           </FormGroup>
-          <Button
-            disabled={!worksheetId}
-            variant="contained"
-            style={{ marginTop: 20 }}
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
+          <Stack spacing={2} direction="row">
+            <Button
+              disabled={!worksheetId}
+              variant="contained"
+              style={{ marginTop: 20 }}
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>
+            <Button
+              disabled={!worksheetId}
+              variant="outlined"
+              style={{ marginTop: 20 }}
+              onClick={initWorkbooks}
+            >
+              Refresh
+            </Button>
+          </Stack>
         </form>
       </Box>
     </Container>
