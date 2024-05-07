@@ -175,9 +175,6 @@ function ChooseWorksheet() {
                   onChange={handleSelect}
                   required
                 >
-                  <MenuItem value="" disabled>
-                    <em>Please select</em>
-                  </MenuItem>
                   {data.map((worksheet) =>
                     isWorksheetVisible(worksheet) ? (
                       <MenuItem key={worksheet.id} value={worksheet.id}>
