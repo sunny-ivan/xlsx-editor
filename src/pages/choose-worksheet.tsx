@@ -128,40 +128,40 @@ function ChooseWorksheet() {
     <Container maxWidth="sm">
       <Person personQuery="me" view="twolines" personCardInteraction="click" />
       <br />
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <ErrorPage error={error} />
-      ) : (
-        <Box>
-          <form>
-            <FormGroup>
-              <FormControl fullWidth>
-                <TextField
-                  label="Drive ID"
-                  defaultValue={driveId}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </FormControl>
-              <FormControl fullWidth style={{ marginTop: 20 }}>
-                <TextField
-                  label="Item ID"
-                  defaultValue={itemId}
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                />
-              </FormControl>
-              <FormControl fullWidth style={{ marginTop: 20 }}>
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Contains hidden worksheets"
-                  checked={containsHidden}
-                  onChange={handleCheckContainsHidden}
-                />
-              </FormControl>
+      <Box>
+        <form>
+          <FormGroup>
+            <FormControl fullWidth>
+              <TextField
+                label="Drive ID"
+                defaultValue={driveId}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </FormControl>
+            <FormControl fullWidth style={{ marginTop: 20 }}>
+              <TextField
+                label="Item ID"
+                defaultValue={itemId}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </FormControl>
+            <FormControl fullWidth style={{ marginTop: 20 }}>
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Contains hidden worksheets"
+                checked={containsHidden}
+                onChange={handleCheckContainsHidden}
+              />
+            </FormControl>
+            {loading ? (
+              <p>Loading...</p>
+            ) : error ? (
+              <ErrorPage error={error} />
+            ) : (
               <FormControl fullWidth style={{ marginTop: 20 }}>
                 <InputLabel id="workbook-worksheet-select-label">
                   Worksheet
@@ -184,18 +184,18 @@ function ChooseWorksheet() {
                   )}
                 </Select>
               </FormControl>
-            </FormGroup>
-            <Button
-              disabled={!worksheetId}
-              variant="contained"
-              style={{ marginTop: 20 }}
-              onClick={handleSubmit}
-            >
-              Submit
-            </Button>
-          </form>
-        </Box>
-      )}
+            )}
+          </FormGroup>
+          <Button
+            disabled={!worksheetId}
+            variant="contained"
+            style={{ marginTop: 20 }}
+            onClick={handleSubmit}
+          >
+            Submit
+          </Button>
+        </form>
+      </Box>
     </Container>
   );
 }
