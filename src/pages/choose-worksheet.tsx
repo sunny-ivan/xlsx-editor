@@ -212,7 +212,7 @@ function ChooseWorksheet() {
               Submit
             </Button>
             <Button
-              disabled={!worksheetId}
+              disabled={loading}
               variant="outlined"
               onClick={initWorkbooks}
             >
