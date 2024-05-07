@@ -3,7 +3,7 @@ import { storagePrefix } from "../../config";
 interface IPreferDocument {
   driveId: string;
   itemId: string;
-  workbookId: string;
+  worksheetId: string;
 }
 
 export function hasPreferDocument() {
@@ -17,7 +17,7 @@ export function hasPreferDocument() {
 export function setPreferDocument(preferences: IPreferDocument) {
   localStorage.setItem(storagePrefix + "driveId", preferences.driveId);
   localStorage.setItem(storagePrefix + "itemid", preferences.itemId);
-  localStorage.setItem(storagePrefix + "workbookid", preferences.workbookId);
+  localStorage.setItem(storagePrefix + "workbookid", preferences.worksheetId);
 }
 
 export function getPreferDocument(): IPreferDocument {
@@ -30,5 +30,5 @@ export function getPreferDocument(): IPreferDocument {
   let workbookId = localStorage.getItem(storagePrefix + "workbookid");
   workbookId = workbookId === null ? "" : workbookId;
 
-  return { driveId, itemId, workbookId };
+  return { driveId, itemId, worksheetId: workbookId };
 }
