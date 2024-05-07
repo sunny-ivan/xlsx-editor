@@ -19,7 +19,7 @@ function ViewSheet() {
     });
   });
 
-  return <div>SheetView</div>;
+  return <div>ViewSheet</div>;
 }
 
 export default ViewSheet;
