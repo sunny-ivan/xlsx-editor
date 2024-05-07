@@ -10,6 +10,7 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
+  InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -161,7 +162,10 @@ function ChooseWorksheet() {
                   onChange={handleCheckContainsHidden}
                 />
               </FormControl>
-              <FormControl fullWidth style={{ marginTop: 20 }} required>
+              <FormControl fullWidth style={{ marginTop: 20 }}>
+                <InputLabel id="workbook-worksheet-select-label">
+                  Worksheet
+                </InputLabel>
                 <Select
                   labelId="workbook-worksheet-select-label"
                   id="workbook-worksheet-select"
