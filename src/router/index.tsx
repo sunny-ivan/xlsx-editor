@@ -15,7 +15,7 @@ const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/logout", element: <Logout /> },
   { path: "/choose", element: <ChooseFile /> },
-  { path: "/choose/:fileId", element: <ChooseWorksheet /> },
+  { path: "/choose/:driveId/:itemId", element: <ChooseWorksheet /> },
   { path: "/view", element: <ViewSheet /> },
 ]);
 

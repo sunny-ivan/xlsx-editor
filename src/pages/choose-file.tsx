@@ -88,7 +88,7 @@ function ChooseFile() {
       item.file.mimeType ===
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     ) {
-      navigate("/choose/" + item.id);
+      navigate("/choose/" + item.parentReference?.driveId + "/" + item.id);
       return;
     }
 
