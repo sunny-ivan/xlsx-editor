@@ -1,6 +1,6 @@
 import { useMsal } from "@azure/msal-react";
 import { useEffect, useMemo, useState } from "react";
-import { Form, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ErrorPage from "./error-page";
 import {
   Box,
