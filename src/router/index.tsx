@@ -9,7 +9,7 @@ import ChooseWorksheet from "../pages/choose-worksheet";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/login" />,
+    element: <Navigate to="/view" />,
     errorElement: <RouteError />,
   },
   { path: "/login", element: <Login /> },
