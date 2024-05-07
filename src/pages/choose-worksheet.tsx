@@ -107,7 +107,7 @@ function ChooseWorksheet() {
       }
     }
     return { id: "" } as WorkbookWorksheet;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const handleSubmit = () => {
@@ -217,6 +217,14 @@ function ChooseWorksheet() {
               onClick={initWorkbooks}
             >
               Refresh
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                navigate("/choose");
+              }}
+            >
+              Back
             </Button>
           </Stack>
         </form>
