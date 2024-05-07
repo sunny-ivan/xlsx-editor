@@ -203,11 +203,10 @@ function ChooseWorksheet() {
               </FormControl>
             )}
           </FormGroup>
-          <Stack spacing={2} direction="row">
+          <Stack spacing={2} direction="row" style={{ marginTop: 20 }}>
             <Button
               disabled={!worksheetId}
               variant="contained"
-              style={{ marginTop: 20 }}
               onClick={handleSubmit}
             >
               Submit
@@ -215,7 +214,6 @@ function ChooseWorksheet() {
             <Button
               disabled={!worksheetId}
               variant="outlined"
-              style={{ marginTop: 20 }}
               onClick={initWorkbooks}
             >
               Refresh
