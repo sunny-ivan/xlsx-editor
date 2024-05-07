@@ -14,6 +14,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  Skeleton,
   TextField,
 } from "@mui/material";
 import { getWorkbooks } from "../services/workbooks/workbooks";
@@ -158,7 +159,21 @@ function ChooseWorksheet() {
               />
             </FormControl>
             {loading ? (
-              <p>Loading...</p>
+              <FormControl fullWidth style={{ marginTop: 20 }}>
+                <InputLabel id="workbook-loading-select-label">
+                  <Skeleton
+                    variant="text"
+                    sx={{ fontSize: "1em", width: "10em" }}
+                  />
+                </InputLabel>
+                <Select
+                  disabled
+                  labelId="workbook-worksheet-loading-label"
+                  id="workbook-worksheet-loading"
+                  label="Loading"
+                  required
+                />
+              </FormControl>
             ) : error ? (
               <ErrorPage error={error} />
             ) : (
