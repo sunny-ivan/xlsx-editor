@@ -39,6 +39,7 @@ function ChooseWorksheet() {
     try {
       setLoading(true);
       setError(null);
+      setWorksheetId("");
 
       if (!driveId) {
         throw new Error("driveId is empty");
