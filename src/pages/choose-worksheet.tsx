@@ -185,6 +185,7 @@ function ChooseWorksheet() {
                   labelId="workbook-worksheet-loading-label"
                   id="workbook-worksheet-loading"
                   label="Loading"
+                  value=""
                   required
                 />
               </FormControl>
