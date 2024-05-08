@@ -28,6 +28,10 @@ export function getItemId(path: string) {
   return graphClient.api(`/me/drive/root:/${path}`).select(["id"]).get();
 }
 
+export function getItemUrl(itemId: string) {
+  return graphClient.api(`/me/drive/items/${itemId}/webUrl`).get();
+}
+
 export function createFile(folderId: string, name: string): Promise<DriveItem> {
   return graphClient.api(`/me/drive/items/${folderId}/children`).post({
     name: name,
