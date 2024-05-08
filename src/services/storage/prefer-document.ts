@@ -8,16 +8,16 @@ interface IPreferDocument {
 
 export function hasPreferDocument() {
   return (
-    localStorage.getItem(storagePrefix + "driveId") !== null &&
+    localStorage.getItem(storagePrefix + "driveid") !== null &&
     localStorage.getItem(storagePrefix + "itemid") !== null &&
-    localStorage.getItem(storagePrefix + "workbookid") !== null
+    localStorage.getItem(storagePrefix + "worksheetid") !== null
   );
 }
 
 export function setPreferDocument(preferences: IPreferDocument) {
-  localStorage.setItem(storagePrefix + "driveId", preferences.driveId);
+  localStorage.setItem(storagePrefix + "driveid", preferences.driveId);
   localStorage.setItem(storagePrefix + "itemid", preferences.itemId);
-  localStorage.setItem(storagePrefix + "workbookid", preferences.worksheetId);
+  localStorage.setItem(storagePrefix + "worksheetid", preferences.worksheetId);
 }
 
 export function getPreferDocument(): IPreferDocument {
@@ -27,8 +27,8 @@ export function getPreferDocument(): IPreferDocument {
   let itemId = localStorage.getItem(storagePrefix + "itemid");
   itemId = itemId === null ? "" : itemId;
 
-  let workbookId = localStorage.getItem(storagePrefix + "workbookid");
-  workbookId = workbookId === null ? "" : workbookId;
+  let worksheetId = localStorage.getItem(storagePrefix + "worksheetId");
+  worksheetId = worksheetId === null ? "" : worksheetId;
 
-  return { driveId, itemId, worksheetId: workbookId };
+  return { driveId, itemId, worksheetId: worksheetId };
 }
