@@ -22,6 +22,8 @@ import { getWorksheets } from "../services/workbooks/worksheets";
 import { WorkbookWorksheet } from "@microsoft/microsoft-graph-types";
 import { Person } from "@microsoft/mgt-react";
 import { setPreferDocument } from "../services/storage/prefer-document";
+import CreateWorksheetDialog from "../components/create-worksheet-dialog";
+import ErrorDialog from "../components/error-dialog";
 
 function ChooseWorksheet() {
   const { instance: pca } = useMsal();
@@ -34,6 +36,8 @@ function ChooseWorksheet() {
 
   const [worksheetId, setWorksheetId] = useState("");
   const [containsHidden, setContainsHidden] = useState(false);
+
+  const [openCreateWorksheet, setOpenCreateWorksheet] = useState(false);
 
   const initWorkbooks = () => {
     try {
@@ -215,6 +219,15 @@ function ChooseWorksheet() {
             <Button
               disabled={loading}
               variant="outlined"
+              onClick={() => {
+                setOpenCreateWorksheet(true);
+              }}
+            >
+              Create
+            </Button>
+            <Button
+              disabled={loading}
+              variant="outlined"
               onClick={initWorkbooks}
             >
               Refresh
@@ -230,6 +243,29 @@ function ChooseWorksheet() {
           </Stack>
         </form>
       </Box>
+      {driveId === undefined || itemId === undefined ? (
+        <ErrorDialog
+          open={openCreateWorksheet}
+          onClose={() => {
+            setOpenCreateWorksheet(false);
+          }}
+          error={
+            new Error(
+              "Type 'undefined' is not assignable to type 'string': driveId and (or) itemId"
+            )
+          }
+        />
+      ) : (
+        <CreateWorksheetDialog
+          open={openCreateWorksheet}
+          onClose={() => {
+            setOpenCreateWorksheet(false);
+            initWorkbooks();
+          }}
+          driveid={driveId}
+          itemid={itemId}
+        />
+      )}
     </Container>
   );
 }
