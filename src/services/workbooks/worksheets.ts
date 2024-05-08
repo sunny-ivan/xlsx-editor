@@ -11,7 +11,7 @@ export async function getWorksheets(driveId: string, itemId: string) {
 export async function createWorksheet(
   driveId: string,
   itemId: string,
-  body: AddPostRequestBody
+  body: AddPostRequestBody = {}
 ) {
   return await excelClient.drives
     .byDriveId(driveId)
