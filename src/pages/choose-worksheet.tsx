@@ -35,13 +35,13 @@ function ChooseWorksheet() {
   const [error, setError] = useState(null as Error | null);
 
   const [worksheetId, setWorksheetId] = useState("");
-  const [containsHidden, setContainsHidden] = useState(false);
+  const [allowHidden, setAllowHidden] = useState(false);
 
   const [openCreateWorksheet, setOpenCreateWorksheet] = useState(false);
 
   const isWorksheetVisible = (worksheet: WorkbookWorksheet) => {
     return (
-      containsHidden ||
+      allowHidden ||
       String(worksheet.visibility).toLowerCase() === "visible" ||
       (!worksheet.visibility && worksheet.id)
     );
@@ -134,8 +134,8 @@ function ChooseWorksheet() {
     setWorksheetId(event.target.value as string);
   };
 
-  const handleCheckContainsHidden = (_event: any, checked: boolean) => {
-    setContainsHidden(checked);
+  const handleCheckAllowHidden = (_event: any, checked: boolean) => {
+    setAllowHidden(checked);
   };
 
   const handleSubmit = () => {
@@ -183,9 +183,9 @@ function ChooseWorksheet() {
             <FormControl fullWidth style={{ marginTop: 20 }}>
               <FormControlLabel
                 control={<Checkbox />}
-                label="Contains hidden worksheets"
-                checked={containsHidden}
-                onChange={handleCheckContainsHidden}
+                label="Allow access to hidden worksheets"
+                checked={allowHidden}
+                onChange={handleCheckAllowHidden}
               />
             </FormControl>
             {loading ? (
