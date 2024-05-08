@@ -39,17 +39,23 @@ function ChooseWorksheet() {
 
   const [openCreateWorksheet, setOpenCreateWorksheet] = useState(false);
 
-  const initWorkbooks = () => {
-    try {
+  const initWorkbooks = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
       setLoading(true);
       setError(null);
       setWorksheetId("");
 
       if (!driveId) {
-        throw new Error("driveId is empty");
+        setError(new Error("driveId is empty"));
+        setLoading(false);
+        resolve();
+        return;
       }
       if (!itemId) {
-        throw new Error("itemId is empty");
+        setError(new Error("itemId is empty"));
+        setLoading(false);
+        resolve();
+        return;
       }
 
       getWorksheets(driveId, itemId)
@@ -67,15 +73,14 @@ function ChooseWorksheet() {
             setWorksheetId(firstVisibleWorksheet.id);
           }
           setLoading(false);
+          resolve();
         })
         .catch((error) => {
           setError(error);
           setLoading(false);
+          resolve();
         });
-    } catch (error: any) {
-      setError(error);
-      setLoading(false);
-    }
+    });
   };
 
   useEffect(() => {
