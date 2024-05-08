@@ -18,7 +18,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { getWorkbooks } from "../services/workbooks/workbooks";
+import { getWorksheets } from "../services/workbooks/worksheets";
 import { WorkbookWorksheet } from "@microsoft/microsoft-graph-types";
 import { Person } from "@microsoft/mgt-react";
 import { setPreferDocument } from "../services/storage/prefer-document";
@@ -48,7 +48,7 @@ function ChooseWorksheet() {
         throw new Error("itemId is empty");
       }
 
-      getWorkbooks(driveId, itemId)
+      getWorksheets(driveId, itemId)
         .then((response) => {
           if (!response) {
             throw new Error("Response is undefined");

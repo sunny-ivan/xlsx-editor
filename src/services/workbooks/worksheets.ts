@@ -1,6 +1,6 @@
 import excelClient from "./client";
 
-export async function getWorkbooks(driveId: string, itemId: string) {
+export async function getWorksheets(driveId: string, itemId: string) {
   return await excelClient.drives
     .byDriveId(driveId)
     .items.byDriveItemId(itemId)
