@@ -18,3 +18,15 @@ export async function createWorksheet(
     .items.byDriveItemId(itemId)
     .workbook.worksheets.add.post(body);
 }
+
+export async function deleteWorksheet(
+  driveId: string,
+  itemId: string,
+  worksheetId: string
+) {
+  return await excelClient.drives
+    .byDriveId(driveId)
+    .items.byDriveItemId(itemId)
+    .workbook.worksheets.byWorkbookWorksheetId(worksheetId)
+    .delete();
+}

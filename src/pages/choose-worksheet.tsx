@@ -17,17 +17,24 @@ import {
   Skeleton,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
-import { getWorksheets } from "../services/workbooks/worksheets";
+import {
+  deleteWorksheet,
+  getWorksheets,
+} from "../services/workbooks/worksheets";
 import { WorkbookWorksheet } from "@microsoft/microsoft-graph-types";
 import { Person } from "@microsoft/mgt-react";
 import CreateWorksheetDialog from "../components/dialogs/create-worksheet-dialog";
 import ErrorDialog from "../components/dialogs/error-dialog";
+import { useConfirm } from "material-ui-confirm";
+import { errorMessage } from "../utils/error";
 
 function ChooseWorksheet() {
   const { instance: pca } = useMsal();
   const navigate = useNavigate();
   const { driveId, itemId } = useParams();
+  const confirm = useConfirm();
 
   const [data, setData] = useState([] as WorkbookWorksheet[]);
   const [loading, setLoading] = useState(false);
@@ -70,7 +77,7 @@ function ChooseWorksheet() {
     return { id: "" } as WorkbookWorksheet;
   };
 
-  const initWorkbooks = (preferWorksheetName?: string): Promise<void> => {
+  const initWorksheets = (preferWorksheetName?: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       setLoading(true);
       setError(null);
@@ -123,7 +130,7 @@ function ChooseWorksheet() {
       if (pca.getAllAccounts().length <= 0) {
         navigate("/login");
       } else {
-        return initWorkbooks();
+        return initWorksheets();
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -226,6 +233,82 @@ function ChooseWorksheet() {
               Next
             </Button>
             <Button
+              disabled={loading || !worksheetId}
+              variant="outlined"
+              onClick={() => {
+                if (!worksheetId) {
+                  console.error("worksheetId to be deleted is empty");
+                  return;
+                }
+
+                let worksheetName = "";
+                for (const worksheet of data) {
+                  if (worksheet.id === worksheetId) {
+                    worksheetName = worksheet.name ? worksheet.name : "";
+                    break;
+                  }
+                }
+
+                confirm({
+                  confirmationButtonProps: {
+                    color: "error",
+                  },
+                  confirmationText: "Confirm",
+                  confirmationKeyword: worksheetName,
+                  confirmationKeywordTextFieldProps: {
+                    variant: "outlined",
+                    label: "Input box",
+                  },
+                  cancellationButtonProps: { autoFocus: true },
+                  content: (
+                    <Box style={{ margin: "10px 0px" }}>
+                      <Typography style={{ marginBottom: 10 }}>
+                        This will permanently delete the content. Deleted
+                        content cannot be recovered.
+                      </Typography>
+                      {data.length <= 1 ? (
+                        <Typography color="error" style={{ marginBottom: 10 }}>
+                          An error may occur when deleting the last worksheet.
+                        </Typography>
+                      ) : null}
+                      <Typography fontWeight="bold">
+                        To confirm, type "{worksheetName}" in the box below
+                      </Typography>
+                    </Box>
+                  ),
+                })
+                  .then(() => {
+                    setLoading(true);
+                    setError(null);
+                    setWorksheetId("");
+                    deleteWorksheet(
+                      driveId as string, // they're not undefined
+                      itemId as string, // they're not undefined
+                      worksheetId
+                    )
+                      .then(() => {
+                        initWorksheets();
+                      })
+                      .catch((error) => {
+                        setLoading(false);
+                        setError(
+                          new Error(
+                            "An exception occurred while deleting the worksheet (Your worksheet might not have been deleted): " +
+                              errorMessage(error) +
+                              "You should refresh at this time."
+                          )
+                        );
+                      });
+                  })
+                  .catch(() => {
+                    // user canceled
+                  });
+              }}
+              color="error"
+            >
+              Delete
+            </Button>
+            <Button
               disabled={loading}
               variant="outlined"
               onClick={() => {
@@ -238,7 +321,7 @@ function ChooseWorksheet() {
               disabled={loading}
               variant="outlined"
               onClick={() => {
-                initWorkbooks();
+                initWorksheets();
               }}
             >
               Refresh
@@ -272,7 +355,7 @@ function ChooseWorksheet() {
           onClose={(created, name) => {
             setOpenCreateWorksheet(false);
             if (created) {
-              initWorkbooks(name);
+              initWorksheets(name);
             }
           }}
           driveid={driveId}
