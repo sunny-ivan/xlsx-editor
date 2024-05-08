@@ -16,19 +16,26 @@ import { errorMessage } from "../utils/error";
 
 export interface IProps {
   open: boolean;
-  onClose: () => void;
+  onClose: (name?: string) => void;
   driveid: string;
   itemid: string;
 }
 
 export default function CreateWorksheetDialog(props: IProps) {
-  const { onClose: closeDlg, open, ...other } = props;
+  const { onClose, open, ...other } = props;
 
   useEffect(() => {});
 
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState(null as Error | null);
+
+  const closeDlg = (name?: string) => {
+    // clear field(s)
+    setName("");
+    console.log(name);
+    onClose(name);
+  };
 
   const handleCancel = () => {
     closeDlg();
@@ -38,9 +45,13 @@ export default function CreateWorksheetDialog(props: IProps) {
     setCreating(true);
     setError(null);
     createWorksheet(props.driveid, props.itemid, { name })
-      .then(() => {
+      .then((worksheet) => {
         setCreating(false);
-        closeDlg();
+        if (worksheet && worksheet.name) {
+          closeDlg(worksheet.name);
+        } else {
+          closeDlg(name);
+        }
       })
       .catch((error) => {
         console.error(error);

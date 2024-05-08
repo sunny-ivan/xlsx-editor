@@ -1,5 +1,5 @@
 import { useMsal } from "@azure/msal-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ErrorPage from "./error-page";
 import {
@@ -35,17 +35,50 @@ function ChooseWorksheet() {
   const [error, setError] = useState(null as Error | null);
 
   const [worksheetId, setWorksheetId] = useState("");
-  const [preferWorksheetName, setPreferWorksheetName] = useState("");
   const [containsHidden, setContainsHidden] = useState(false);
 
   const [openCreateWorksheet, setOpenCreateWorksheet] = useState(false);
 
-  const initWorkbooks = (): Promise<void> => {
+  const isWorksheetVisible = (worksheet: WorkbookWorksheet) => {
+    return (
+      containsHidden ||
+      String(worksheet.visibility).toLowerCase() === "visible" ||
+      (!worksheet.visibility && worksheet.id)
+    );
+  };
+
+  const getFirstVisibleWorksheet = (
+    data: WorkbookWorksheet[],
+    preferWorksheetName?: string
+  ) => {
+    console.log(preferWorksheetName);
+    if (preferWorksheetName) {
+      for (const worksheet of data) {
+        if (
+          isWorksheetVisible(worksheet) &&
+          worksheet.name === preferWorksheetName
+        ) {
+          console.log("prefered", worksheet);
+          return worksheet;
+        }
+      }
+    }
+
+    for (const worksheet of data) {
+      if (isWorksheetVisible(worksheet)) {
+        console.log("first", worksheet);
+        return worksheet;
+      }
+    }
+
+    return { id: "" } as WorkbookWorksheet;
+  };
+
+  const initWorkbooks = (preferWorksheetName?: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       setLoading(true);
       setError(null);
       setWorksheetId("");
-      setPreferWorksheetName("");
 
       if (!driveId) {
         setError(new Error("driveId is empty"));
@@ -71,8 +104,12 @@ function ChooseWorksheet() {
             );
           }
           setData(response.value);
-          if (firstVisibleWorksheet.id) {
-            setWorksheetId(firstVisibleWorksheet.id);
+          const first = getFirstVisibleWorksheet(
+            response.value,
+            preferWorksheetName
+          ).id;
+          if (first) {
+            setWorksheetId(first);
           }
           setLoading(false);
           resolve();
@@ -96,14 +133,6 @@ function ChooseWorksheet() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // To run the effect only once, set the array empty
 
-  const isWorksheetVisible = (worksheet: WorkbookWorksheet) => {
-    return (
-      containsHidden ||
-      String(worksheet.visibility).toLowerCase() === "visible" ||
-      (!worksheet.visibility && worksheet.id)
-    );
-  };
-
   const handleSelect = (event: SelectChangeEvent) => {
     setWorksheetId(event.target.value as string);
   };
@@ -111,16 +140,6 @@ function ChooseWorksheet() {
   const handleCheckContainsHidden = (_event: any, checked: boolean) => {
     setContainsHidden(checked);
   };
-
-  const firstVisibleWorksheet = useMemo(() => {
-    for (const worksheet of data) {
-      if (isWorksheetVisible(worksheet)) {
-        return worksheet;
-      }
-    }
-    return { id: "" } as WorkbookWorksheet;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
 
   const handleSubmit = () => {
     if (!driveId) {
@@ -200,7 +219,6 @@ function ChooseWorksheet() {
                   labelId="workbook-worksheet-select-label"
                   id="workbook-worksheet-select"
                   value={worksheetId}
-                  defaultValue={firstVisibleWorksheet.id}
                   label="Worksheet"
                   onChange={handleSelect}
                   required
@@ -236,7 +254,9 @@ function ChooseWorksheet() {
             <Button
               disabled={loading}
               variant="outlined"
-              onClick={initWorkbooks}
+              onClick={() => {
+                initWorkbooks();
+              }}
             >
               Refresh
             </Button>
@@ -263,21 +283,18 @@ function ChooseWorksheet() {
             )
           }
         />
-      ) : openCreateWorksheet ? (
+      ) : (
         <CreateWorksheetDialog
           open={openCreateWorksheet}
           onClose={(name) => {
+            console.log(name);
             setOpenCreateWorksheet(false);
-            initWorkbooks().then(() => {
-              if (name) {
-                setPreferWorksheetName(name);
-              }
-            });
+            initWorkbooks(name);
           }}
           driveid={driveId}
           itemid={itemId}
         />
-      ) : null}
+      )}
     </Container>
   );
 }
