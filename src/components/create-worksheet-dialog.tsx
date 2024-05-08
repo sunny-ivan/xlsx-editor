@@ -9,7 +9,7 @@ import {
   FormHelperText,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createWorksheet } from "../services/workbooks/worksheets";
 import { LoadingButton } from "@mui/lab";
 import { errorMessage } from "../utils/error";
@@ -28,9 +28,16 @@ export default function CreateWorksheetDialog(props: IProps) {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState(null as Error | null);
 
+  useEffect(() => {
+    if (open) {
+      // reset the states
+      setError(null);
+      setCreating(false);
+      setName("");
+    }
+  }, [open]);
+
   const closeDlg = (created: boolean = false, name?: string) => {
-    // clear field(s)
-    setName("");
     onClose(created, name);
   };
 
