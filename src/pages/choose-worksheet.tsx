@@ -283,9 +283,11 @@ function ChooseWorksheet() {
       ) : (
         <CreateWorksheetDialog
           open={openCreateWorksheet}
-          onClose={(name) => {
+          onClose={(created, name) => {
             setOpenCreateWorksheet(false);
-            initWorkbooks(name);
+            if (created) {
+              initWorkbooks(name);
+            }
           }}
           driveid={driveId}
           itemid={itemId}

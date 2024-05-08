@@ -9,14 +9,14 @@ import {
   FormHelperText,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createWorksheet } from "../services/workbooks/worksheets";
 import { LoadingButton } from "@mui/lab";
 import { errorMessage } from "../utils/error";
 
 export interface IProps {
   open: boolean;
-  onClose: (name?: string) => void;
+  onClose: (created: boolean, name?: string) => void;
   driveid: string;
   itemid: string;
 }
@@ -24,16 +24,14 @@ export interface IProps {
 export default function CreateWorksheetDialog(props: IProps) {
   const { onClose, open, ...other } = props;
 
-  useEffect(() => {});
-
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState(null as Error | null);
 
-  const closeDlg = (name?: string) => {
+  const closeDlg = (created: boolean = false, name?: string) => {
     // clear field(s)
     setName("");
-    onClose(name);
+    onClose(created, name);
   };
 
   const handleCancel = () => {
@@ -47,9 +45,9 @@ export default function CreateWorksheetDialog(props: IProps) {
       .then((worksheet) => {
         setCreating(false);
         if (worksheet && worksheet.name) {
-          closeDlg(worksheet.name);
+          closeDlg(true, worksheet.name);
         } else {
-          closeDlg(name);
+          closeDlg(true, name);
         }
       })
       .catch((error) => {
