@@ -19,6 +19,7 @@
     "@microsoft/mgt-react": "^4.2.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@mui/icons-material": "^5.15.15",
+    "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.15.15",
     "@mui/x-data-grid": "^7.3.1",
     "@types/jest": "^27.0.1",
