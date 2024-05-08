@@ -35,6 +35,7 @@ function ChooseWorksheet() {
   const [error, setError] = useState(null as Error | null);
 
   const [worksheetId, setWorksheetId] = useState("");
+  const [preferWorksheetName, setPreferWorksheetName] = useState("");
   const [containsHidden, setContainsHidden] = useState(false);
 
   const [openCreateWorksheet, setOpenCreateWorksheet] = useState(false);
@@ -44,6 +45,7 @@ function ChooseWorksheet() {
       setLoading(true);
       setError(null);
       setWorksheetId("");
+      setPreferWorksheetName("");
 
       if (!driveId) {
         setError(new Error("driveId is empty"));
@@ -260,17 +262,21 @@ function ChooseWorksheet() {
             )
           }
         />
-      ) : (
+      ) : openCreateWorksheet ? (
         <CreateWorksheetDialog
           open={openCreateWorksheet}
-          onClose={() => {
+          onClose={(name) => {
             setOpenCreateWorksheet(false);
-            initWorkbooks();
+            initWorkbooks().then(() => {
+              if (name) {
+                setPreferWorksheetName(name);
+              }
+            });
           }}
           driveid={driveId}
           itemid={itemId}
         />
-      )}
+      ) : null}
     </Container>
   );
 }
