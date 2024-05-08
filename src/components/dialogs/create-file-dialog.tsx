@@ -6,22 +6,23 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  FormHelperText,
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { createWorksheet } from "../services/workbooks/worksheets";
 import { LoadingButton } from "@mui/lab";
-import { errorMessage } from "../utils/error";
+import { errorMessage } from "../../utils/error";
+import { createFile } from "../../services/drive";
+import capitalize from "lodash/capitalize";
 
 export interface IProps {
   open: boolean;
   onClose: (created: boolean, name?: string) => void;
-  driveid: string;
-  itemid: string;
+  folderid: string;
+  default?: string;
+  extension?: string;
 }
 
-export default function CreateWorksheetDialog(props: IProps) {
+export default function CreateFileDialog(props: IProps) {
   const { onClose, open, ...other } = props;
 
   const [name, setName] = useState("");
@@ -33,9 +34,9 @@ export default function CreateWorksheetDialog(props: IProps) {
       // reset the states
       setError(null);
       setCreating(false);
-      setName("");
+      setName(props.default ? props.default : "");
     }
-  }, [open]);
+  }, [open, props.default]);
 
   const closeDlg = (created: boolean = false, name?: string) => {
     onClose(created, name);
@@ -48,13 +49,14 @@ export default function CreateWorksheetDialog(props: IProps) {
   const handleOk = () => {
     setCreating(true);
     setError(null);
-    createWorksheet(props.driveid, props.itemid, { name })
-      .then((worksheet) => {
+    const filename = name + "." + props.extension;
+    createFile(props.folderid, filename)
+      .then((item) => {
         setCreating(false);
-        if (worksheet && worksheet.name) {
-          closeDlg(true, worksheet.name);
+        if (item && item.name) {
+          closeDlg(true, item.name);
         } else {
-          closeDlg(true, name);
+          closeDlg(true, filename);
         }
       })
       .catch((error) => {
@@ -71,7 +73,10 @@ export default function CreateWorksheetDialog(props: IProps) {
       open={open}
       {...other}
     >
-      <DialogTitle>Create Worksheet</DialogTitle>
+      <DialogTitle>
+        Create{props.extension ? ` ${capitalize(props.extension)} ` : " "}
+        File
+      </DialogTitle>
       <DialogContent dividers>
         {error ? (
           <Alert severity="error">
@@ -86,18 +91,14 @@ export default function CreateWorksheetDialog(props: IProps) {
         ) : null}
         <FormControl fullWidth style={{ marginTop: 20 }}>
           <TextField
-            id="workbook-worksheet-create-input"
+            id="drive-fileitem-create-input"
             label="Name"
             variant="outlined"
+            defaultValue={props.default}
             value={name}
             onChange={(event) => setName(event.target.value)}
-            aria-describedby="workbook-worksheet-create-helper-text"
+            InputProps={{ readOnly: creating }}
           />
-          <FormHelperText id="workbook-worksheet-create-helper-text">
-            Optional. The name of the worksheet to be added. If specified, name
-            should be unique. If not specified, Excel determines the name of the
-            new worksheet.
-          </FormHelperText>
         </FormControl>
       </DialogContent>
       <DialogActions>

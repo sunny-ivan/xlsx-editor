@@ -11,7 +11,7 @@ import { DriveItem } from "@microsoft/microsoft-graph-types";
 import CustomHistory from "../utils/history";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
-import CreateFileDialog from "../components/create-file-dialog";
+import CreateFileDialog from "../components/dialogs/create-file-dialog";
 
 const history = new CustomHistory();
 

@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { useRef } from "react";
-import ErrorPage from "../pages/error-page";
+import ErrorPage from "../../pages/error-page";
 
 export interface IProps {
   open: boolean;

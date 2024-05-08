@@ -21,9 +21,8 @@ import {
 import { getWorksheets } from "../services/workbooks/worksheets";
 import { WorkbookWorksheet } from "@microsoft/microsoft-graph-types";
 import { Person } from "@microsoft/mgt-react";
-import { setPreferDocument } from "../services/storage/prefer-document";
-import CreateWorksheetDialog from "../components/create-worksheet-dialog";
-import ErrorDialog from "../components/error-dialog";
+import CreateWorksheetDialog from "../components/dialogs/create-worksheet-dialog";
+import ErrorDialog from "../components/dialogs/error-dialog";
 
 function ChooseWorksheet() {
   const { instance: pca } = useMsal();
@@ -139,20 +138,7 @@ function ChooseWorksheet() {
   };
 
   const handleSubmit = () => {
-    if (!driveId) {
-      throw new Error("driveId is empty");
-    }
-    if (!itemId) {
-      throw new Error("itemId is empty");
-    }
-
-    setPreferDocument({
-      driveId,
-      itemId,
-      worksheetId,
-    });
-
-    navigate("/view");
+    navigate("/choose/" + driveId + "/" + itemId + "/" + worksheetId);
   };
 
   return (
@@ -237,7 +223,7 @@ function ChooseWorksheet() {
               variant="contained"
               onClick={handleSubmit}
             >
-              Submit
+              Next
             </Button>
             <Button
               disabled={loading}
