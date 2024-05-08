@@ -51,14 +51,12 @@ function ChooseWorksheet() {
     data: WorkbookWorksheet[],
     preferWorksheetName?: string
   ) => {
-    console.log(preferWorksheetName);
     if (preferWorksheetName) {
       for (const worksheet of data) {
         if (
           isWorksheetVisible(worksheet) &&
           worksheet.name === preferWorksheetName
         ) {
-          console.log("prefered", worksheet);
           return worksheet;
         }
       }
@@ -66,7 +64,6 @@ function ChooseWorksheet() {
 
     for (const worksheet of data) {
       if (isWorksheetVisible(worksheet)) {
-        console.log("first", worksheet);
         return worksheet;
       }
     }
@@ -287,7 +284,6 @@ function ChooseWorksheet() {
         <CreateWorksheetDialog
           open={openCreateWorksheet}
           onClose={(name) => {
-            console.log(name);
             setOpenCreateWorksheet(false);
             initWorkbooks(name);
           }}

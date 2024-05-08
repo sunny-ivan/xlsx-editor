@@ -9,7 +9,6 @@ export default class CustomHistory {
   }
 
   public goToPreviousPage(): string {
-    console.log("goToPreviousPage");
     if (this.currentIndex > 0) {
       this.currentIndex--;
       return this.history[this.currentIndex];

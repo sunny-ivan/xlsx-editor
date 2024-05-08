@@ -33,7 +33,6 @@ export default function CreateWorksheetDialog(props: IProps) {
   const closeDlg = (name?: string) => {
     // clear field(s)
     setName("");
-    console.log(name);
     onClose(name);
   };
 
