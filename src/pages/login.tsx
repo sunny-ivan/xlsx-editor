@@ -5,6 +5,7 @@ import { ReactComponent as MicrosoftSvg } from "../assets/microsoft.svg";
 import { useNavigate } from "react-router-dom";
 import { Providers, ProviderState } from "@microsoft/mgt-react";
 import { login } from "../services/auth/utils";
+import LegalText from "../components/legal";
 
 function Login() {
   const { instance: pca } = useMsal();
@@ -48,6 +49,12 @@ function Login() {
         <Paper elevation={3} style={{ padding: 20 }}>
           <Typography variant="h4" align="center" gutterBottom>
             Sign in
+          </Typography>
+          <LegalText />
+          <Typography variant="subtitle1" fontWeight="bold">
+            By signing in, you are accepting the terms and conditions. Upon
+            selecting your account type during login, corresponding terms of
+            use, privacy agreements, and service agreements will be applicable.
           </Typography>
           <Button
             disabled={loading}
