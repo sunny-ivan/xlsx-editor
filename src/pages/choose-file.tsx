@@ -2,14 +2,16 @@ import { useMsal } from "@azure/msal-react";
 import { FileList, Person } from "@microsoft/mgt-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createAppFolder, getItemId } from "../services/drive/appfolder";
+import { createAppFolder, getItemId } from "../services/drive";
 import ErrorPage from "./error-page";
 import { appdataDirectory } from "../config";
 import MgtTemplate from "../components/mgt-template";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Container, IconButton, Stack, Typography } from "@mui/material";
 import { DriveItem } from "@microsoft/microsoft-graph-types";
 import CustomHistory from "../utils/history";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AddIcon from "@mui/icons-material/Add";
+import CreateFileDialog from "../components/create-file-dialog";
 
 const history = new CustomHistory();
 
@@ -21,6 +23,8 @@ function ChooseFile() {
   const [error, setError] = useState(null as Error | null);
   const [directoryId, setDirectoryId] = useState("");
   const [allowBack, setAllowBack] = useState(false);
+
+  const [openCreateFile, setOpenCreateFile] = useState(false);
 
   // item-path: item-id
   // const dirStorage: { [key: string]: string } = {};
@@ -105,15 +109,19 @@ function ChooseFile() {
         <ErrorPage error={error} />
       ) : (
         <Box>
-          <Button
-            disabled={!allowBack}
-            onClick={handleBack}
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            style={{ marginBottom: 15 }}
-          >
-            Back
-          </Button>
+          <Stack spacing={2} direction="row" style={{ marginBottom: 15 }}>
+            <IconButton disabled={!allowBack} onClick={handleBack}>
+              <ArrowBackIcon />
+            </IconButton>
+            <IconButton
+              aria-label="create"
+              onClick={() => {
+                setOpenCreateFile(true);
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Stack>
           <FileList
             key={directoryId}
             itemId={directoryId}
@@ -131,6 +139,19 @@ function ChooseFile() {
           </FileList>
         </Box>
       )}
+
+      <CreateFileDialog
+        open={openCreateFile}
+        onClose={(created) => {
+          setOpenCreateFile(false);
+          if (created) {
+            initAppFolder();
+          }
+        }}
+        folderid={directoryId}
+        default="Book"
+        extension="xlsx"
+      />
     </Container>
   );
 }
