@@ -32,7 +32,7 @@ function Login() {
         setLoading(false);
         if (pca.getAllAccounts().length > 0) {
           Providers.globalProvider.setState(ProviderState.SignedIn);
-          navigate("/choose");
+          navigate("/");
         }
       });
   });
