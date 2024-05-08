@@ -21,6 +21,9 @@ interface ChildProps {
 
 export default function ChildComponent(props: ChildProps) {
   const error = props.error;
+  console.error(
+    "An error has occurred. The program has invoked the error page."
+  );
   console.error(error);
 
   return (
