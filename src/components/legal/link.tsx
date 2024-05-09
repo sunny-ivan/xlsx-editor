@@ -1,8 +1,9 @@
 import { Link as MuiLink } from "@mui/material";
+import { ReactNode } from "react";
 
 interface IProp {
   href: string;
-  children: JSX.Element | string;
+  children: ReactNode;
 }
 
 export default function Link(props: IProp) {
