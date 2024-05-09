@@ -1,9 +1,9 @@
 import { useMsal } from "@azure/msal-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { hasPreferDocument } from "../services/storage/prefer-document";
+import { hasPreferDocument } from "../../services/storage/prefer-document";
 
-function ViewSheet() {
+function ViewTable() {
   const { instance: pca } = useMsal();
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ function ViewSheet() {
     });
   });
 
-  return <div>ViewSheet</div>;
+  return <div>ViewTable</div>;
 }
 
-export default ViewSheet;
+export default ViewTable;

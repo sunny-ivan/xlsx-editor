@@ -1,6 +1,6 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
 import ChooseFile from "../pages/choose-file";
-import ViewSheet from "../pages/view-sheet";
+import ViewTable from "../pages/view-table";
 import Login from "../pages/login";
 import RouteError from "../pages/route-error";
 import Logout from "../pages/logout";
@@ -18,7 +18,7 @@ const router = createBrowserRouter([
   { path: "/choose", element: <ChooseFile /> },
   { path: "/choose/:driveId/:itemId", element: <ChooseWorksheet /> },
   { path: "/choose/:driveId/:itemId/:worksheetId", element: <ChooseTable /> },
-  { path: "/view", element: <ViewSheet /> },
+  { path: "/view", element: <ViewTable /> },
 ]);
 
 export default router;
