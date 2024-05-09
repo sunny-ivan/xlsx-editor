@@ -73,7 +73,7 @@ export default function CreateWorksheetDialog(props: IProps) {
     >
       <DialogTitle>Create Worksheet</DialogTitle>
       <DialogContent dividers>
-        {error ? (
+        {error && (
           <Alert severity="error">
             {errorMessage(error) +
               // if error has errorEscaped
@@ -83,7 +83,7 @@ export default function CreateWorksheetDialog(props: IProps) {
                   " (" + (error as any).errorEscaped.code + ")"
                 : "")}
           </Alert>
-        ) : null}
+        )}
         <FormControl fullWidth style={{ marginTop: 20 }}>
           <TextField
             id="workbook-worksheet-create-input"

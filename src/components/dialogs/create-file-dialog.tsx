@@ -78,7 +78,7 @@ export default function CreateFileDialog(props: IProps) {
         File
       </DialogTitle>
       <DialogContent dividers>
-        {error ? (
+        {error && (
           <Alert severity="error">
             {errorMessage(error) +
               // if error has errorEscaped
@@ -88,7 +88,7 @@ export default function CreateFileDialog(props: IProps) {
                   " (" + (error as any).errorEscaped.code + ")"
                 : "")}
           </Alert>
-        ) : null}
+        )}
         <FormControl fullWidth style={{ marginTop: 20 }}>
           <TextField
             id="drive-fileitem-create-input"

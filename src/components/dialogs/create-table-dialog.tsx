@@ -108,7 +108,7 @@ export default function CreateTableDialog(props: IProps) {
     >
       <DialogTitle>Create Table</DialogTitle>
       <DialogContent dividers>
-        {error ? (
+        {error && (
           <Alert severity="error">
             {errorMessage(error) +
               // if error has errorEscaped
@@ -118,7 +118,7 @@ export default function CreateTableDialog(props: IProps) {
                   " (" + (error as any).errorEscaped.code + ")"
                 : "")}
           </Alert>
-        ) : null}
+        )}
         <FormControl fullWidth style={{ marginTop: 20 }}>
           <TextField
             id="workbook-table-create-start-input"

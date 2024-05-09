@@ -213,12 +213,13 @@ function ChooseWorksheet() {
                   onChange={handleSelect}
                   required
                 >
-                  {data.map((worksheet) =>
-                    isWorksheetVisible(worksheet) ? (
-                      <MenuItem key={worksheet.id} value={worksheet.id}>
-                        {worksheet.name}
-                      </MenuItem>
-                    ) : null
+                  {data.map(
+                    (worksheet) =>
+                      isWorksheetVisible(worksheet) && (
+                        <MenuItem key={worksheet.id} value={worksheet.id}>
+                          {worksheet.name}
+                        </MenuItem>
+                      )
                   )}
                 </Select>
               </FormControl>
@@ -266,11 +267,11 @@ function ChooseWorksheet() {
                         This will permanently delete the content. Deleted
                         content cannot be recovered.
                       </Typography>
-                      {data.length <= 1 ? (
+                      {data.length <= 1 && (
                         <Typography color="error" style={{ marginBottom: 10 }}>
                           An error may occur when deleting the last worksheet.
                         </Typography>
-                      ) : null}
+                      )}
                       <Typography fontWeight="bold">
                         To confirm, type "{worksheetName}" in the box below
                       </Typography>
