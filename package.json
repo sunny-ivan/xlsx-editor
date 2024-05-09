@@ -15,6 +15,7 @@
     "@azure/msal-react": "^2.0.15",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@insdim-lab/mui-plugins": "^5.1.6",
     "@microsoft/mgt-msal2-provider": "^4.2.1",
     "@microsoft/mgt-react": "^4.2.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
