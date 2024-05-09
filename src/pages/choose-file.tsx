@@ -126,7 +126,11 @@ function ChooseFile() {
       ) : (
         <Box>
           <Stack spacing={2} direction="row" style={{ marginBottom: 15 }}>
-            <IconButton disabled={!allowBack} onClick={handleBack}>
+            <IconButton
+              aria-label="back"
+              disabled={!allowBack}
+              onClick={handleBack}
+            >
               <ArrowBackIcon />
             </IconButton>
             <IconButton
