@@ -129,14 +129,7 @@ function ChooseFile() {
             disableOpenOnClick={true}
             fileExtensions={["xlsx", ""]}
             itemClick={handleItemClick}
-          >
-            <MgtTemplate template="loading">
-              <Typography variant="subtitle1">Loading your files...</Typography>
-            </MgtTemplate>
-            <MgtTemplate template="no-data">
-              <Typography variant="subtitle1">No files found</Typography>
-            </MgtTemplate>
-          </FileList>
+          />
         </Box>
       )}
 
