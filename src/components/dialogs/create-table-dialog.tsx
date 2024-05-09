@@ -37,8 +37,8 @@ export default function CreateTableDialog(props: IProps) {
   const [error, setError] = useState(null as Error | null);
 
   const [rangeStart, setRangeStart] = useState("A1");
-  const [rangeEnd, setRangeEnd] = useState("D6");
-  const [hasHeaders, sethasHeaders] = useState(false);
+  const [rangeEnd, setRangeEnd] = useState("F1");
+  const [hasHeaders, sethasHeaders] = useState(true);
 
   const rangeStartColor = useMemo(() => {
     return rangeAddressPartMaches(rangeStart) ? undefined : "error";
