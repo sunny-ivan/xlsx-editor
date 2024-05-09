@@ -23,6 +23,7 @@ import CreateFileDialog from "../components/dialogs/create-file-dialog";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useConfirm } from "material-ui-confirm";
 import { getAccount } from "../services/auth/utils";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 const history = new CustomHistory();
 
@@ -142,6 +143,14 @@ function ChooseFile() {
               <AddIcon />
             </IconButton>
             <IconButton
+              aria-label="refresh"
+              onClick={() => {
+                // TODO: implement reloading
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
+            <IconButton
               aria-label="open in new tab"
               onClick={() => {
                 let username = "";
@@ -223,6 +232,7 @@ function ChooseFile() {
             itemClick={handleItemClick}
             ref={filelistRef}
           />
+          {/* // TODO: implement loading and no-data template correctly */}
         </Box>
       )}
 
