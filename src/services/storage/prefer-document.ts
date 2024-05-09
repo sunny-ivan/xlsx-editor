@@ -24,7 +24,7 @@ export function setPreferDocument(preferences: IPreferDocument) {
 }
 
 export function getPreferDocument(): IPreferDocument {
-  let driveId = localStorage.getItem(storagePrefix + "itemid");
+  let driveId = localStorage.getItem(storagePrefix + "driveid");
   driveId = driveId === null ? "" : driveId;
 
   let itemId = localStorage.getItem(storagePrefix + "itemid");
