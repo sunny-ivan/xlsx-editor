@@ -1,4 +1,5 @@
-import { Typography, Link } from "@mui/material";
+import { Typography } from "@mui/material";
+import Link from "./link";
 
 interface IProp {
   xname: string;
@@ -8,12 +9,8 @@ interface IProp {
 }
 
 export default function Disclaimer(props: IProp) {
-  const X = () => (
-    <Link href={props.xurl} color="primary" children={props.xname} />
-  );
-  const Y = () => (
-    <Link href={props.yurl} color="primary" children={props.yname} />
-  );
+  const X = () => <Link href={props.xurl} children={props.xname} />;
+  const Y = () => <Link href={props.yurl} children={props.yname} />;
 
   return (
     <Typography variant="body1">
