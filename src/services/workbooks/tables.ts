@@ -25,3 +25,17 @@ export async function createTablebyWorksheetId(
     .workbook.worksheets.byWorkbookWorksheetId(worksheetId)
     .tables.add.post(body);
 }
+
+export async function deleteTable(
+  driveId: string,
+  itemId: string,
+  worksheetId: string,
+  tableId: string
+) {
+  return await excelClient.drives
+    .byDriveId(driveId)
+    .items.byDriveItemId(itemId)
+    .workbook.worksheets.byWorkbookWorksheetId(worksheetId)
+    .tables.byWorkbookTableId(tableId)
+    .delete();
+}

@@ -5,6 +5,7 @@ import Login from "../pages/login";
 import RouteError from "../pages/route-error";
 import Logout from "../pages/logout";
 import ChooseWorksheet from "../pages/choose-worksheet";
+import ChooseTable from "../pages/choose-table";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
   { path: "/logout", element: <Logout /> },
   { path: "/choose", element: <ChooseFile /> },
   { path: "/choose/:driveId/:itemId", element: <ChooseWorksheet /> },
+  { path: "/choose/:driveId/:itemId/:worksheetId", element: <ChooseTable /> },
   { path: "/view", element: <ViewSheet /> },
 ]);
 
