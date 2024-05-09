@@ -45,7 +45,7 @@ function Login() {
       alignItems="center"
       style={{ height: "100vh" }}
     >
-      <Grid item xs={10} sm={6} md={4}>
+      <Grid item xs={11} sm={8} md={6}>
         <Paper elevation={3} style={{ padding: 20 }}>
           <Typography variant="h4" align="center" gutterBottom>
             Sign in
