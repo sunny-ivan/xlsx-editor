@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@microsoft/microsoft-graph-types": "^2.40.0",
+    "@mui/x-data-grid-generator": "^7.3.2",
     "@types/lodash": "^4.17.1",
     "@types/react": "^18.3.1"
   },
