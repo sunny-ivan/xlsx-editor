@@ -3,6 +3,7 @@ import AuthProvider from "./auth-provider";
 import MuiThemeProvider from "./mui-theme-provider";
 import EmotionThemeProvider from "./emotion-theme-provider";
 import { ConfirmProvider } from "material-ui-confirm";
+import SnackbarProvider from "./SnackbarProvider";
 
 type SlotProps = {
   children: ReactNode;
@@ -15,7 +16,9 @@ export default function GlobalProvider(props: SlotProps) {
     <MuiThemeProvider>
       <EmotionThemeProvider>
         <ConfirmProvider>
-          <AuthProvider children={children} />
+          <SnackbarProvider>
+            <AuthProvider children={children} />
+          </SnackbarProvider>
         </ConfirmProvider>
       </EmotionThemeProvider>
     </MuiThemeProvider>
