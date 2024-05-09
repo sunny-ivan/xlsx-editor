@@ -27,7 +27,7 @@ export default function CreateFileDialog(props: IProps) {
 
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
-  const [error, setError] = useState(null as Error | null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (open) {

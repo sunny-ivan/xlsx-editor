@@ -34,7 +34,7 @@ export default function CreateTableDialog(props: IProps) {
   const { onClose, open, ...other } = props;
 
   const [creating, setCreating] = useState(false);
-  const [error, setError] = useState(null as Error | null);
+  const [error, setError] = useState<Error | null>(null);
 
   const [rangeStart, setRangeStart] = useState("A1");
   const [rangeEnd, setRangeEnd] = useState("F1");

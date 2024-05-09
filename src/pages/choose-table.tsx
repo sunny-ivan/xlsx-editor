@@ -35,9 +35,9 @@ function ChooseTable() {
   const { driveId, itemId, worksheetId } = useParams();
   const confirm = useConfirm();
 
-  const [data, setData] = useState([] as WorkbookTable[]);
+  const [data, setData] = useState<WorkbookTable[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null as Error | null);
+  const [error, setError] = useState<Error | null>(null);
 
   const [tableId, setTableId] = useState("");
 

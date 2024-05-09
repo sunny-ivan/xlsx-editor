@@ -36,9 +36,9 @@ function ChooseWorksheet() {
   const { driveId, itemId } = useParams();
   const confirm = useConfirm();
 
-  const [data, setData] = useState([] as WorkbookWorksheet[]);
+  const [data, setData] = useState<WorkbookWorksheet[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null as Error | null);
+  const [error, setError] = useState<Error | null>(null);
 
   const [worksheetId, setWorksheetId] = useState("");
   const [allowHidden, setAllowHidden] = useState(false);

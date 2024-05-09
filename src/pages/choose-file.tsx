@@ -33,7 +33,7 @@ function ChooseFile() {
   const confirm = useConfirm();
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null as Error | null);
+  const [error, setError] = useState<Error | null>(null);
   const [directoryId, setDirectoryId] = useState("");
   const [allowBack, setAllowBack] = useState(false);
 
