@@ -258,8 +258,8 @@ function ChooseWorksheet() {
                   confirmationKeywordTextFieldProps: {
                     variant: "outlined",
                     label: "Input box",
+                    autoFocus: true,
                   },
-                  cancellationButtonProps: { autoFocus: true },
                   content: (
                     <Box style={{ margin: "10px 0px" }}>
                       <Typography style={{ marginBottom: 10 }}>
