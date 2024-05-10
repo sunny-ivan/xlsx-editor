@@ -53,9 +53,9 @@ export default function CreateTableDialog(props: IProps) {
       // reset the states
       setError(null);
       setCreating(false);
-      sethasHeaders(false);
       setRangeStart("A1");
-      setRangeEnd("D6");
+      setRangeEnd("F1");
+      sethasHeaders(true);
     }
   }, [open]);
 
