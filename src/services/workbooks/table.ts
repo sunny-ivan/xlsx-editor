@@ -215,33 +215,7 @@ export class Table {
     }
 
     // Microsoft's API Endpoint is not available: The API you are trying to use could not be found. It may be available in a newer version of Excel. Please refer to the documentation: "https://docs.microsoft.com/office/dev/add-ins/reference/requirement-sets/excel-api-requirement-sets". ApiNotFound
-    /*
-    const response = await excelClient.drives
-      .byDriveId(this.driveId)
-      .items.byDriveItemId(this.itemId)
-      .workbook.worksheets.byWorkbookWorksheetId(this.worksheetId)
-      .tables.byWorkbookTableId(this.tableId)
-      .rows.byWorkbookTableRowId(id)
-      .get();
-
-    if (!response) {
-      throw new Error("Response of RowsbyWorkbookTableRowId is undefined");
-    }
-
-    let rowId: string | number | undefined = response.id;
-    if (
-      (rowId === undefined && response.index !== undefined) ||
-      typeof rowId == "number"
-    ) {
-      rowId = response.index;
-    }
-    if (rowId === undefined) {
-      throw new Error(
-        "There is no valid information (id or index) to locate the unique ROW."
-      );
-    }
-    const rowFields = this.rowValueToFields(response.values);
-    */
+    // so we have to fetch all the rows
 
     const rows = await this.rows();
     const index = parseInt(id);
