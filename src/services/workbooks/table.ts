@@ -82,7 +82,7 @@ class TableRow {
   update(newContent: RowFields) {
     const patchRow: WorkbookTableRow = {
       index: typeof this.id === "number" ? this.id : undefined,
-      values: [newContent],
+      values: [this.fieldsToRowValue(newContent)],
     };
     return this.requestBuilder().patch(patchRow);
   }

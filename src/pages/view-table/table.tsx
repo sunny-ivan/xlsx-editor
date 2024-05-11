@@ -217,7 +217,7 @@ export default function FullFeaturedCrudGrid(props: IProp) {
   const pullRows = () => {
     setLoading(true);
     setRowsError(null);
-    table
+    return table
       .rows()
       .then((rows) => {
         // Rows
@@ -324,17 +324,14 @@ export default function FullFeaturedCrudGrid(props: IProp) {
 
       table
         .getRow(rowIndex.toString())
-        .then((row) => {
-          return row.update(row);
+        .then((tableRow) => {
+          if (row === undefined) {
+            throw new Error("The requested row doesn't exist on the table.");
+          }
+          return tableRow.update(row);
         })
         .then(() => {
-          setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View },
-          });
-        })
-        .then(() => {
-          pullRows();
+          return pullRows();
         })
         .catch((error) => {
           if (error === undefined) {
