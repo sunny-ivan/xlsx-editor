@@ -5,7 +5,7 @@ import {
   getPreferDocument,
   hasPreferDocument,
 } from "../../services/storage/prefer-document";
-import Playground from "./table";
+import FullFeaturedCrudGrid from "./table";
 import { Box, Typography } from "@mui/material";
 import { Table } from "../../services/workbooks/table";
 import { GridColDef } from "@mui/x-data-grid";
@@ -103,7 +103,7 @@ function ViewTable() {
       {loading ? (
         <Typography>Loading...</Typography>
       ) : error === null ? (
-        <Playground table={table} getColumns={handleGetColumns} />
+        <FullFeaturedCrudGrid table={table} getColumns={handleGetColumns} />
       ) : (
         <ErrorPage error={error} />
       )}
