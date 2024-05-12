@@ -1,5 +1,5 @@
 import { useMsal } from "@azure/msal-react";
-import { Typography, Button, Grid, Paper } from "@mui/material";
+import { Typography, Button, Grid, Paper, Stack } from "@mui/material";
 import { EndSessionRequest } from "@azure/msal-browser";
 import { useEffect } from "react";
 import { ReactComponent as MicrosoftSvg } from "../assets/microsoft.svg";
@@ -48,23 +48,23 @@ function Logout() {
           <Typography variant="h4" align="center" gutterBottom>
             Sign out your{" "}
             <MicrosoftSvg
-              style={{ marginLeft: 10, height: 40, marginBottom: -10 }}
+              style={{ marginLeft: 10, height: 30, marginBottom: -5 }}
             />{" "}
             account
           </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleSignOut}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: 20,
-            }}
-          >
-            Sign out
-          </Button>
+          <Stack spacing={1} direction="column" style={{ marginTop: 20 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleSignOut}
+            >
+              Sign out
+            </Button>
+            <Button color="primary" fullWidth onClick={() => navigate(-1)}>
+              Back
+            </Button>
+          </Stack>
         </Paper>
       </Grid>
     </Grid>
