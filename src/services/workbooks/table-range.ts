@@ -1,6 +1,6 @@
 import excelClient from "./client";
 import { Json } from "graph-excel-client/dist/models";
-import { WorkbookTableItemRequestBuilder } from "graph-driver-client/dist/drives/item/items/item/workbook/worksheets/item/tables/item";
+import { WorkbookTableItemRequestBuilder } from "graph-excel-client/dist/drives/item/items/item/workbook/worksheets/item/tables/item";
 import { WorkbookWorksheetItemRequestBuilder } from "graph-excel-client/dist/drives/item/items/item/workbook/worksheets/item";
 import { Client } from "@microsoft/microsoft-graph-client";
 import { authProvider } from "../auth/authProvider";
