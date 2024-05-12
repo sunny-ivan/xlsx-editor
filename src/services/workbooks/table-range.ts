@@ -113,10 +113,9 @@ export class TableRange {
    */
   public async updateRow(rowIndex: number, diff: Json) {
     const range = this.rangeSingleRow(rowIndex);
-    console.log(range, diff);
     // Microsoft didn't declare it in openapi document
     // return this.worksheetApi.rangeWithAddress(range).patch(...);
-    graphClient
+    return graphClient
       .api(
         "/drives/" +
           this.driveId +
@@ -129,5 +128,29 @@ export class TableRange {
           "')"
       )
       .update({ values: diff });
+  }
+
+  /**
+   * Delete a single row
+   * @param rowIndex index of row
+   * @returns
+   */
+  public async deleteRow(rowIndex: number) {
+    const range = this.rangeSingleRow(rowIndex);
+    // Microsoft didn't declare it in openapi document
+    // return this.worksheetApi.rangeWithAddress(range).delete.post({...});
+    return graphClient
+      .api(
+        "/drives/" +
+          this.driveId +
+          "/items/" +
+          this.itemId +
+          "/workbook/worksheets/" +
+          this.worksheetId +
+          "/range(address='" +
+          range +
+          "')/delete"
+      )
+      .post({ shift: "Up" });
   }
 }

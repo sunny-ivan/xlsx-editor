@@ -8,9 +8,9 @@ interface TableColumn {
   name: string;
 }
 
-type RowFields = { [key: string]: any };
+export type RowFields = { [key: string]: any };
 
-function generateDiff(obj1: RowFields, obj2: RowFields): RowFields {
+export function generateDiff(obj1: RowFields, obj2: RowFields): RowFields {
   const diff: RowFields = {};
 
   for (const key in obj1) {
@@ -102,7 +102,6 @@ class TableRow {
   }
 
   update(newContent: RowFields) {
-    console.log(newContent);
     const range = new TableRange(
       this.driveId,
       this.itemId,
@@ -110,7 +109,7 @@ class TableRow {
       this.tableId
     );
     return range.initialize().then(() => {
-      range.updateRow(
+      return range.updateRow(
         this.index,
         this.fieldsToRowValue(generateDiff(this.content, newContent)) // Only modified values will be updated
       );
@@ -118,7 +117,15 @@ class TableRow {
   }
 
   delete() {
-    return this.requestBuilder().delete();
+    const range = new TableRange(
+      this.driveId,
+      this.itemId,
+      this.worksheetId,
+      this.tableId
+    );
+    return range.initialize().then(() => {
+      return range.deleteRow(this.index);
+    });
   }
 }
 

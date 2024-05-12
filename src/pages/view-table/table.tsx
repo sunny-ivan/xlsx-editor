@@ -19,6 +19,9 @@ import {
   GridSlots,
   GridLocaleText,
   GRID_DEFAULT_LOCALE_TEXT,
+  GridCellParams,
+  MuiEvent,
+  GridCellModes,
 } from "@mui/x-data-grid";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -28,7 +31,7 @@ import { useConfirm } from "material-ui-confirm";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "../../provider/SnackbarProvider";
 import { errorMessage } from "../../utils/error";
-import { Table } from "../../services/workbooks/table";
+import { RowFields, Table } from "../../services/workbooks/table";
 
 let table: Table;
 
@@ -167,7 +170,8 @@ export default function FullFeaturedCrudGrid(props: IProp) {
       headerName: "Actions",
       width: 100,
       cellClassName: "actions",
-      getActions: ({ id }) => {
+      getActions: (params) => {
+        const { id } = params;
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
         if (isInEditMode) {
@@ -214,7 +218,10 @@ export default function FullFeaturedCrudGrid(props: IProp) {
   let reserveIdField = true;
 
   // Pull data from Microsoft
-  const pullRows = () => {
+  const pullRows = (): Promise<void> => {
+    if (loading) {
+      return Promise.resolve();
+    }
     setLoading(true);
     setRowsError(null);
     return table
@@ -224,7 +231,7 @@ export default function FullFeaturedCrudGrid(props: IProp) {
         const newRows: GridRowModel[] = [];
         rows.forEach((row, index) => {
           reserveIdField = row.id === undefined; // reserve `id` field if the original table doesn't have a id column
-          const newRow: { [key: string]: any } = {
+          const newRow: RowFields = {
             // MUI X: The data grid component requires all rows to have a unique `id` property.
             id: !reserveIdField ? row.id : index,
             // For row editing (update, delete)
@@ -239,12 +246,24 @@ export default function FullFeaturedCrudGrid(props: IProp) {
         });
         setRows(newRows);
 
+        // Switch all rows to view mode
+        for (const key in rowModesModel) {
+          setRowModesModel({
+            ...rowModesModel,
+            [key]: {
+              mode: GridRowModes.View,
+              ignoreModifications: true,
+            },
+          });
+        }
+
         setRowsError(null);
-        setLoading(false);
       })
       .catch((error) => {
         console.error(error);
         setRowsError(error);
+      })
+      .finally(() => {
         setLoading(false);
       });
   };
@@ -276,101 +295,142 @@ export default function FullFeaturedCrudGrid(props: IProp) {
     setLoading(false);
   };
 
+  const saveEditedRow = (id: number | string, row?: RowFields) => {
+    handlerStart();
+    let rowIndex = id;
+
+    new Promise<void>((resolve) => {
+      if (row === undefined) {
+        // Give MUI X and React some time to update row
+        setTimeout(() => {
+          resolve();
+        }, 500);
+      } else {
+        resolve();
+      }
+    })
+      .then(() => {
+        if (row === undefined) {
+          for (const r of rows) {
+            if (r.id === id) {
+              // rowIndex = r.index;
+              row = r;
+              break;
+            }
+          }
+
+          if (row === undefined) {
+            throw new Error("The requested row doesn't exist on the table.");
+          }
+        }
+
+        console.log("newRow=", row);
+
+        reservedFields.forEach((invalidField) => {
+          if (row === undefined) {
+            return;
+          }
+
+          if (Object.prototype.hasOwnProperty.call(row, invalidField)) {
+            delete row[invalidField];
+          }
+        });
+
+        if (reserveIdField && Object.prototype.hasOwnProperty.call(row, "id")) {
+          delete row.id;
+        }
+      })
+      .then(() => {
+        return table.getRow(rowIndex.toString());
+      })
+      .then((tableRow) => {
+        if (row === undefined) {
+          throw new Error("The requested row doesn't exist on the table.");
+        }
+        console.log(row);
+        return tableRow.update(row);
+      })
+      .then(() => {
+        return pullRows();
+      })
+      .catch((error) => {
+        if (error === undefined) {
+          // user cancelled
+          handlerSuccess();
+          return;
+        }
+        handlerCatch(error);
+      });
+  };
+
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
     event
   ) => {
+    console.log(params);
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
       event.defaultMuiPrevented = true;
     }
   };
 
-  const handleEditClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  const openEditLimitSnackbar = () => {
+    snackbar.openSnackbar({
+      message: "You can only edit one row at a time",
+      open: true,
+      severity: "error",
+      snackbarProps: { autoHideDuration: 5000 },
+    });
   };
 
-  const handleSaveClick = (id: GridRowId) => () => {
-    handlerStart();
-
-    let row: { [key: string]: any } | undefined = undefined;
-    let rowIndex = -1;
-
-    try {
-      for (const r of rows) {
-        if (r.id === id) {
-          rowIndex = r.index;
-          row = { ...r };
-          break;
+  const handleCellDoubleClick = (params: GridCellParams, event: MuiEvent) => {
+    if (params.cellMode === GridCellModes.View) {
+      for (const key in rowModesModel) {
+        if (rowModesModel[key].mode === GridRowModes.Edit) {
+          openEditLimitSnackbar();
+          // Prevent entering edit mode
+          event.defaultMuiPrevented = true;
         }
       }
-
-      if (row === undefined) {
-        throw new Error("The requested row doesn't exist on the table.");
-      }
-
-      reservedFields.forEach((invalidField) => {
-        if (row === undefined) {
-          return;
-        }
-
-        if (Object.prototype.hasOwnProperty.call(row, invalidField)) {
-          delete row[invalidField];
-        }
-      });
-
-      if (reserveIdField && Object.prototype.hasOwnProperty.call(row, "id")) {
-        delete row.id;
-      }
-
-      table
-        .getRow(rowIndex.toString())
-        .then((tableRow) => {
-          if (row === undefined) {
-            throw new Error("The requested row doesn't exist on the table.");
-          }
-          return tableRow.update(row);
-        })
-        .then(() => {
-          return pullRows();
-        })
-        .catch((error) => {
-          if (error === undefined) {
-            // user cancelled
-            handlerSuccess();
-            return;
-          }
-          handlerCatch(error);
-        })
-        .finally(() => {
-          setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View },
-          });
-        });
-    } catch (error: any) {
-      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-      handlerCatch(error);
     }
   };
 
+  const handleEditClick = (id: GridRowId) => () => {
+    for (const key in rowModesModel) {
+      if (rowModesModel[key].mode === GridRowModes.Edit) {
+        openEditLimitSnackbar();
+        return;
+      }
+    }
+    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+  };
+
+  const handleSaveClick =
+    (id: GridRowId, ...params: any) =>
+    () => {
+      console.log("params", params);
+      setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+      saveEditedRow(id);
+    };
+
   const handleDeleteClick = (id: GridRowId) => () => {
-    // TODO: delete row
     handlerStart();
 
-    let row: { [key: string]: any } | undefined = undefined;
+    let row: RowFields | undefined = undefined;
     let rowIndex = -1;
 
     try {
-      for (const r of rows) {
-        if (r.id === id) {
-          rowIndex = r.index;
-          row = { ...r };
-          break;
-        }
-      }
-
       if (row === undefined) {
-        throw new Error("The requested row doesn't exist on the table.");
+        for (const r of rows) {
+          if (r.id === id) {
+            rowIndex = r.index;
+            row = { ...r };
+            break;
+          }
+        }
+
+        if (row === undefined) {
+          throw new Error("The requested row doesn't exist on the table.");
+        }
       }
 
       reservedFields.forEach((invalidField) => {
@@ -436,10 +496,33 @@ export default function FullFeaturedCrudGrid(props: IProp) {
     }
   };
 
-  const processRowUpdate = (newRow: GridRowModel) => {
+  const processRowUpdate = (newRow: GridRowModel, _oldRow: GridRowModel) => {
     const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    let id = -1;
+    const newRows = rows.map((row, index) =>
+      newRow.id === index
+        ? ((id = index), { ...updatedRow, id: index })
+        : { ...row, id: index }
+    );
+    setRows(newRows);
+    id >= 0 && saveEditedRow(id, newRow);
+    console.log(id, newRow);
     return updatedRow;
+  };
+
+  const handleCellKeyDown: GridEventListener<"cellKeyDown"> = (
+    params,
+    event
+  ) => {
+    const { id } = params;
+    if (event.key === "Enter") {
+      setRowModesModel({
+        ...rowModesModel,
+        [id]: { mode: GridRowModes.View },
+      });
+      event.preventDefault();
+      return;
+    }
   };
 
   const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
@@ -473,6 +556,8 @@ export default function FullFeaturedCrudGrid(props: IProp) {
         editMode="row"
         rowModesModel={rowModesModel}
         onRowModesModelChange={handleRowModesModelChange}
+        onCellKeyDown={handleCellKeyDown}
+        onCellDoubleClick={handleCellDoubleClick}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
         slots={{
