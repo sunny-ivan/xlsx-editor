@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import Snackbar from "@mui/material/Snackbar";
+import Snackbar, { SnackbarProps } from "@mui/material/Snackbar";
 import Alert, { AlertProps } from "@mui/material/Alert";
 
 type SnackbarData = {
   message: ReactNode;
   severity: AlertProps["severity"];
   action?: ReactNode;
-  snackbarProps?: any;
+  snackbarProps?: SnackbarProps;
   alertProps?: AlertProps;
   open: boolean;
 };
