@@ -134,7 +134,7 @@ export class Table {
   private itemId: string;
   private worksheetId: string;
   private tableId: string;
-  public cols: TableColumn[]; // {id: column.index.toString(), name: column.name}
+  public cols: TableColumn[] = []; // {id: column.index.toString(), name: column.name}
 
   constructor(
     driveId: string,
@@ -146,7 +146,6 @@ export class Table {
     this.itemId = itemId;
     this.worksheetId = worksheetId;
     this.tableId = tableId;
-    this.cols = [];
   }
 
   /**
