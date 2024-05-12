@@ -1,4 +1,4 @@
-import { AccountInfo } from "@azure/msal-browser";
+import { AccountInfo, EndSessionRequest } from "@azure/msal-browser";
 import { scopes } from "../../config";
 import pca from "./configure";
 
@@ -9,6 +9,17 @@ export async function login() {
   };
 
   return await pca.loginRedirect(loginRequest);
+}
+
+export async function logout() {
+  const account = await getAccount();
+  const logOutRequest: EndSessionRequest = {
+    account: account,
+    postLogoutRedirectUri: window.location.href,
+    logoutHint: account.username,
+  };
+
+  pca.logoutRedirect(logOutRequest);
 }
 
 export async function getAccount(): Promise<AccountInfo> {

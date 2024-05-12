@@ -1,23 +1,21 @@
 import { useMsal } from "@azure/msal-react";
 import { Typography, Button, Grid, Paper, Stack } from "@mui/material";
-import { EndSessionRequest } from "@azure/msal-browser";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ReactComponent as MicrosoftSvg } from "../assets/microsoft.svg";
 import { useNavigate } from "react-router-dom";
+import { Providers, ProviderState } from "@microsoft/mgt-react";
+import { logout } from "../services/auth/utils";
 
 function Logout() {
   const { instance: pca } = useMsal();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   const handleSignOut = async () => {
     try {
-      const logOutRequest: EndSessionRequest = {
-        account: pca.getAllAccounts()[0],
-        postLogoutRedirectUri: window.location.href,
-        logoutHint: pca.getAllAccounts()[0].username,
-      };
-
-      pca.logoutRedirect(logOutRequest);
+      setLoading(true);
+      Providers.globalProvider.setState(ProviderState.SignedOut);
+      logout();
     } catch (error) {
       console.log("Logout error:", error);
     }
@@ -33,8 +31,10 @@ function Logout() {
         if (pca.getAllAccounts().length <= 0) {
           navigate("/login");
         }
+        setLoading(false);
       });
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Grid
@@ -54,12 +54,13 @@ function Logout() {
           </Typography>
           <Stack spacing={1} direction="column" style={{ marginTop: 20 }}>
             <Button
+              disabled={loading}
               variant="contained"
               color="primary"
               fullWidth
               onClick={handleSignOut}
             >
-              Sign out
+              {loading ? "Signing you out" : "Sign out"}
             </Button>
             <Button color="primary" fullWidth onClick={() => navigate(-1)}>
               Back
