@@ -236,8 +236,7 @@ export default function FullFeaturedCrudGrid(props: IProp) {
       .rows()
       .then((rows) => {
         // Rows
-        const newRows: GridRowModel[] = [];
-        rows.forEach((row, index) => {
+        const newRows: GridRowModel[] = rows.map((row, index) => {
           reserveIdField = row.id === undefined; // reserve `id` field if the original table doesn't have a id column
           const newRow: RowFields = {
             // MUI X: The data grid component requires all rows to have a unique `id` property.
@@ -249,8 +248,7 @@ export default function FullFeaturedCrudGrid(props: IProp) {
             ...row,
           };
           newRow.id = row.id || index;
-          // push single row
-          newRows.push(newRow);
+          return newRow;
         });
         setRows(newRows);
 
