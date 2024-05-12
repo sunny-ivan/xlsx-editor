@@ -23,7 +23,14 @@ import {
   MuiEvent,
   GridCellModes,
 } from "@mui/x-data-grid";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { Stack, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -38,37 +45,36 @@ let table: Table;
 interface EditToolbarProps {
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  pullRows: () => void;
+  pullRows: (force?: boolean) => void;
+  saveWarning: (content?: ReactNode | null) => Promise<void>;
 }
 
 /**
  * Edit Toolbar
  */
 const EditToolbar = (props: EditToolbarProps) => {
-  const { setLoading, pullRows } = props;
+  const { setLoading, pullRows, saveWarning } = props;
 
   const navigate = useNavigate();
-  const confirm = useConfirm();
   const snackbar = useSnackbar();
 
   const handleBack = () => {
-    confirm({
-      title:
-        "Any unsaved changes will be lost if you return to the file selection page",
-    })
-      .then(() => {
-        navigate("/choose");
-      })
-      .catch(() => {
-        // user canceled
-      });
+    saveWarning(
+      "Any unsaved changes will be lost if you return to the file selection page"
+    ).then(() => {
+      navigate("/choose");
+    });
+  };
+
+  const handleRefresh = () => {
+    saveWarning().then(() => pullRows(true));
   };
 
   const handleInsertEmptyRow = () => {
     setLoading(true);
 
-    table
-      .insertEmpty()
+    saveWarning()
+      .then(() => table.insertEmpty())
       .then(() => {
         pullRows();
       })
@@ -113,9 +119,7 @@ const EditToolbar = (props: EditToolbarProps) => {
           disabled={props.loading}
           color="primary"
           startIcon={<RefreshIcon />}
-          onClick={() => {
-            pullRows();
-          }}
+          onClick={handleRefresh}
           variant="outlined"
         >
           Refresh
@@ -280,6 +284,15 @@ export default function FullFeaturedCrudGrid(props: IProp) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tableParent]);
 
+  const isEditing = useMemo(() => {
+    for (const key in rowModesModel) {
+      if (rowModesModel[key].mode === GridRowModes.Edit) {
+        return true;
+      }
+    }
+    return false;
+  }, [rowModesModel]);
+
   const handlerStart = () => {
     setLoading(true);
   };
@@ -300,6 +313,37 @@ export default function FullFeaturedCrudGrid(props: IProp) {
   const handlerSuccess = () => {
     setLoading(false);
   };
+
+  /**
+   * Show a "unsaved changes will be lost" warning, will setLoading(false) if user cancelled
+   * @param content
+   * @returns
+   */
+  const saveWarning = (content?: ReactNode | null) =>
+    new Promise<void>((resolve, reject) => {
+      if (isEditing) {
+        return confirm({
+          title:
+            "Any unsaved changes will be lost if you continue the operation.",
+          content,
+        })
+          .then(() => resolve())
+          .catch((error) => {
+            if (error === undefined) {
+              snackbar.openSnackbar({
+                message: errorMessage("User cancelled"),
+                severity: "info",
+                open: true,
+              });
+              setLoading(false);
+              return;
+            }
+            reject(error);
+          });
+      } else {
+        resolve();
+      }
+    });
 
   const saveEditedRow = (id: number | string, row?: RowFields) => {
     handlerStart();
@@ -390,22 +434,18 @@ export default function FullFeaturedCrudGrid(props: IProp) {
 
   const handleCellDoubleClick = (params: GridCellParams, event: MuiEvent) => {
     if (params.cellMode === GridCellModes.View) {
-      for (const key in rowModesModel) {
-        if (rowModesModel[key].mode === GridRowModes.Edit) {
-          openEditLimitSnackbar();
-          // Prevent entering edit mode
-          event.defaultMuiPrevented = true;
-        }
+      if (isEditing) {
+        openEditLimitSnackbar();
+        // Prevent entering edit mode
+        event.defaultMuiPrevented = true;
       }
     }
   };
 
   const handleEditClick = (id: GridRowId) => () => {
-    for (const key in rowModesModel) {
-      if (rowModesModel[key].mode === GridRowModes.Edit) {
-        openEditLimitSnackbar();
-        return;
-      }
+    if (isEditing) {
+      openEditLimitSnackbar();
+      return;
     }
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
@@ -456,7 +496,10 @@ export default function FullFeaturedCrudGrid(props: IProp) {
         title: "Delete a row",
         content: (
           <Box>
-            <Typography>Are you sure to delete the row?</Typography>
+            <Typography>
+              Are you sure to delete the row?
+              {isEditing ? " All unsaved edits will be lost." : ""}
+            </Typography>
           </Box>
         ),
       })
@@ -573,6 +616,7 @@ export default function FullFeaturedCrudGrid(props: IProp) {
             loading,
             setLoading,
             pullRows,
+            saveWarning,
           },
         }}
       />
