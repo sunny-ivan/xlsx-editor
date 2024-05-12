@@ -32,19 +32,26 @@ import {
   useState,
 } from "react";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { Stack, Typography } from "@mui/material";
+import { Backdrop, CircularProgress, Stack, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useConfirm } from "material-ui-confirm";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "../../provider/snackbar-provider";
 import { errorMessage } from "../../utils/error";
 import { RowFields, Table } from "../../services/workbooks/table";
+import {
+  OpenIteminNewTabConfirmContent,
+  OpenIteminNewTabConfirmOptions,
+} from "../../components/utils/open-item-in-new-tab";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 let table: Table;
 
 interface EditToolbarProps {
+  itemId: string;
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  setOpenBackdrop: Dispatch<SetStateAction<boolean>>;
   pullRows: (force?: boolean) => void;
   saveWarning: (content?: ReactNode | null) => Promise<void>;
 }
@@ -53,10 +60,11 @@ interface EditToolbarProps {
  * Edit Toolbar
  */
 const EditToolbar = (props: EditToolbarProps) => {
-  const { setLoading, pullRows, saveWarning } = props;
+  const { itemId, setLoading, setOpenBackdrop, pullRows, saveWarning } = props;
 
   const navigate = useNavigate();
   const snackbar = useSnackbar();
+  const confirm = useConfirm();
 
   const handleBack = () => {
     saveWarning(
@@ -88,6 +96,32 @@ const EditToolbar = (props: EditToolbarProps) => {
       });
   };
 
+  const handleOpeninNewTab = async () => {
+    try {
+      setOpenBackdrop(true);
+      const content = await OpenIteminNewTabConfirmContent(itemId);
+      if (!content) {
+        setOpenBackdrop(false);
+        return;
+      }
+      setOpenBackdrop(false);
+      await confirm({ ...OpenIteminNewTabConfirmOptions, content });
+    } catch (error) {
+      if (error === undefined) {
+        // user cancelled
+        setOpenBackdrop(false);
+        return;
+      }
+      snackbar.openSnackbar({
+        message: errorMessage(error),
+        open: true,
+        severity: "error",
+        snackbarProps: { autoHideDuration: 5000 },
+      });
+      setOpenBackdrop(false);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -117,6 +151,15 @@ const EditToolbar = (props: EditToolbarProps) => {
         <Button
           disabled={props.loading}
           color="primary"
+          startIcon={<OpenInNewIcon />}
+          onClick={handleOpeninNewTab}
+          variant="outlined"
+        >
+          Open File
+        </Button>
+        <Button
+          disabled={props.loading}
+          color="primary"
           startIcon={<RefreshIcon />}
           onClick={handleRefresh}
           variant="outlined"
@@ -137,16 +180,18 @@ const EditToolbar = (props: EditToolbarProps) => {
 };
 
 interface IProp {
+  itemId: string;
   table: Table;
   getColumns: () => GridColDef[];
 }
 
 export default function FullFeaturedCrudGrid(props: IProp) {
-  const { table: tableParent, getColumns } = props;
+  const { itemId, table: tableParent, getColumns } = props;
   const snackbar = useSnackbar();
   const confirm = useConfirm();
 
   const [loading, setLoading] = useState(true);
+  const [openBackdrop, setOpenBackdrop] = useState(false);
   const [rowsError, setRowsError] = useState<Error | null>(null);
   const disableDataGrid = useMemo(() => rowsError, [rowsError]);
   const [customLocaleText, setCustomLocalText] = useState<GridLocaleText>(
@@ -611,13 +656,18 @@ export default function FullFeaturedCrudGrid(props: IProp) {
         }}
         slotProps={{
           toolbar: {
+            itemId,
             loading,
             setLoading,
+            setOpenBackdrop,
             pullRows,
             saveWarning,
           },
         }}
       />
+      <Backdrop open={openBackdrop} style={{ zIndex: 9999 }}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 }

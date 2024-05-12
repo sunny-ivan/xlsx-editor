@@ -103,7 +103,11 @@ function ViewTable() {
       {loading ? (
         <Typography>Loading...</Typography>
       ) : error === null ? (
-        <FullFeaturedCrudGrid table={table} getColumns={handleGetColumns} />
+        <FullFeaturedCrudGrid
+          itemId={itemId}
+          table={table}
+          getColumns={handleGetColumns}
+        />
       ) : (
         <ErrorPage error={error} />
       )}
