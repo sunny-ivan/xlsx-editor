@@ -71,9 +71,8 @@ const EditToolbar = (props: EditToolbarProps) => {
   };
 
   const handleInsertEmptyRow = () => {
-    setLoading(true);
-
     saveWarning()
+      .then(() => setLoading(true))
       .then(() => table.insertEmpty())
       .then(() => {
         pullRows();
@@ -458,8 +457,6 @@ export default function FullFeaturedCrudGrid(props: IProp) {
     };
 
   const handleDeleteClick = (id: GridRowId) => () => {
-    handlerStart();
-
     let row: RowFields | undefined = undefined;
     let rowIndex = -1;
 
@@ -503,6 +500,7 @@ export default function FullFeaturedCrudGrid(props: IProp) {
           </Box>
         ),
       })
+        .then(() => handlerStart())
         .then(() => {
           return table.getRow(rowIndex.toString());
         })
