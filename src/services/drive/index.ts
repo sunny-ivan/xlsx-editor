@@ -38,3 +38,15 @@ export function createFile(folderId: string, name: string): Promise<DriveItem> {
     file: {},
   });
 }
+
+/**
+ * Get LastModifiedAt (or updateAt) of Item
+ * @param itemId
+ * @returns id,lastModifiedDateTime, name, size
+ */
+export function getItemLastModifiedAt(itemId: string): Promise<DriveItem> {
+  return graphClient
+    .api(`/me/drive/items/${itemId}`)
+    .select(["id", "lastModifiedDateTime", "name", "size"])
+    .get();
+}
