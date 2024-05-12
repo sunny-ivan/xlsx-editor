@@ -117,6 +117,69 @@ function ChooseFile() {
     console.log(item);
   };
 
+  const handleOpeninNewTab = () => {
+    let username = "";
+    setOpenBackdrop(true);
+    new Promise<void>((resolve, _reject) => {
+      getAccount()
+        .then((account) => {
+          username = account.username || "this account";
+          resolve();
+        })
+        .catch(() => {
+          username = "this account";
+          resolve();
+        });
+    })
+      .then(() => {
+        return getItemUrl(directoryId);
+      })
+      .then((response) => {
+        return response && typeof response.value === "string"
+          ? response.value
+          : // eslint-disable-next-line no-script-url
+            "javascript:void(0);";
+      })
+      .then((url: string) => {
+        setOpenBackdrop(false);
+        return confirm({
+          title: "",
+          confirmationButtonProps: {
+            style: {
+              display: "none",
+            },
+          },
+          cancellationText: "Close",
+          content: (
+            <Box style={{ margin: "10px 0px" }}>
+              <Typography>
+                <Link href={url} target="_blank" rel="noopener noreferrer">
+                  Click here
+                </Link>{" "}
+                to open the folder in a new tab? You need to be logged in as{" "}
+                <Box
+                  component="strong"
+                  display="inline"
+                  children={username}
+                ></Box>{" "}
+                to access this folder.
+              </Typography>
+            </Box>
+          ),
+        });
+      })
+      .then(() => {
+        // openned successfully
+      })
+      .catch((error) => {
+        setOpenBackdrop(false);
+        if (error === undefined) {
+          // user closed
+          return;
+        }
+      });
+  };
+
   return (
     <Container maxWidth="sm">
       <Person personQuery="me" view="twolines" personCardInteraction="click" />
@@ -153,73 +216,7 @@ function ChooseFile() {
             </IconButton>
             <IconButton
               aria-label="open in new tab"
-              onClick={() => {
-                let username = "";
-                setOpenBackdrop(true);
-                new Promise<void>((resolve, _reject) => {
-                  getAccount()
-                    .then((account) => {
-                      username = account.username || "this account";
-                      resolve();
-                    })
-                    .catch(() => {
-                      username = "this account";
-                      resolve();
-                    });
-                })
-                  .then(() => {
-                    return getItemUrl(directoryId);
-                  })
-                  .then((response) => {
-                    return response && typeof response.value === "string"
-                      ? response.value
-                      : // eslint-disable-next-line no-script-url
-                        "javascript:void(0);";
-                  })
-                  .then((url: string) => {
-                    setOpenBackdrop(false);
-                    return confirm({
-                      title: "",
-                      confirmationButtonProps: {
-                        style: {
-                          display: "none",
-                        },
-                      },
-                      cancellationText: "Close",
-                      content: (
-                        <Box style={{ margin: "10px 0px" }}>
-                          <Typography>
-                            <Link
-                              href={url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Click here
-                            </Link>{" "}
-                            to open the folder in a new tab? You need to be
-                            logged in as{" "}
-                            <Box
-                              component="strong"
-                              display="inline"
-                              children={username}
-                            ></Box>{" "}
-                            to access this folder.
-                          </Typography>
-                        </Box>
-                      ),
-                    });
-                  })
-                  .then(() => {
-                    // openned successfully
-                  })
-                  .catch((error) => {
-                    setOpenBackdrop(false);
-                    if (error === undefined) {
-                      // user closed
-                      return;
-                    }
-                  });
-              }}
+              onClick={handleOpeninNewTab}
             >
               <OpenInNewIcon />
             </IconButton>
