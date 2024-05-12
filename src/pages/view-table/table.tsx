@@ -36,7 +36,7 @@ import { Stack, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useConfirm } from "material-ui-confirm";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from "../../provider/SnackbarProvider";
+import { useSnackbar } from "../../provider/snackbar-provider";
 import { errorMessage } from "../../utils/error";
 import { RowFields, Table } from "../../services/workbooks/table";
 

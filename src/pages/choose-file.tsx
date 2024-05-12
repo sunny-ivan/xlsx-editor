@@ -25,7 +25,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useConfirm } from "material-ui-confirm";
 import { getAccount } from "../services/auth/utils";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { useSnackbar } from "../provider/SnackbarProvider";
+import { useSnackbar } from "../provider/snackbar-provider";
 
 const history = new CustomHistory();
 

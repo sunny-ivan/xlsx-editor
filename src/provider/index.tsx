@@ -3,7 +3,7 @@ import AuthProvider from "./auth-provider";
 import MuiThemeProvider from "./mui-theme-provider";
 import EmotionThemeProvider from "./emotion-theme-provider";
 import { ConfirmProvider } from "material-ui-confirm";
-import SnackbarProvider from "./SnackbarProvider";
+import SnackbarProvider from "./snackbar-provider";
 
 type SlotProps = {
   children: ReactNode;
