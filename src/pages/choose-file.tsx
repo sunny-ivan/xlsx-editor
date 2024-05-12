@@ -8,6 +8,7 @@ import { appdataDirectory } from "../config";
 import {
   Backdrop,
   Box,
+  Button,
   CircularProgress,
   Container,
   IconButton,
@@ -222,6 +223,9 @@ function ChooseFile() {
             >
               <OpenInNewIcon />
             </IconButton>
+            <Button aria-label="back" onClick={() => navigate("/logout")}>
+              Logout
+            </Button>
           </Stack>
           <FileList
             key={directoryId}

@@ -330,6 +330,13 @@ function ChooseTable() {
             >
               Back
             </Button>
+            <Button
+              onClick={() => {
+                navigate("/logout");
+              }}
+            >
+              Logout
+            </Button>
           </Stack>
         </form>
       </Box>

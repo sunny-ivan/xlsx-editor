@@ -120,6 +120,14 @@ const EditToolbar = (props: EditToolbarProps) => {
         >
           Refresh
         </Button>
+        <Button
+          color="primary"
+          onClick={() => {
+            navigate("/logout");
+          }}
+        >
+          Logout
+        </Button>
       </Stack>
     </Box>
   );
