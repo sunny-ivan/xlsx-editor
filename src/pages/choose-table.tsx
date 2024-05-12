@@ -121,6 +121,72 @@ function ChooseTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // To run the effect only once, set the array empty
 
+  const handleDelete = () => {
+    if (!tableId) {
+      console.error("tableId to be deleted is empty");
+      return;
+    }
+
+    let tableName = "";
+    for (const table of data) {
+      if (table.id === tableId) {
+        tableName = table.name ? table.name : "";
+        break;
+      }
+    }
+
+    confirm({
+      confirmationButtonProps: {
+        color: "error",
+      },
+      confirmationText: "Confirm",
+      confirmationKeyword: tableName,
+      confirmationKeywordTextFieldProps: {
+        variant: "outlined",
+        label: "Input box",
+        autoFocus: true,
+      },
+      content: (
+        <Box style={{ margin: "10px 0px" }}>
+          <Typography style={{ marginBottom: 10 }}>
+            This will permanently delete the content. Deleted content cannot be
+            recovered.
+          </Typography>
+          <Typography fontWeight="bold">
+            To confirm, type "{tableName}" in the box below
+          </Typography>
+        </Box>
+      ),
+    })
+      .then(() => {
+        setLoading(true);
+        setError(null);
+        setTableId("");
+        deleteTable(
+          driveId as string, // they're not undefined
+          itemId as string, // they're not undefined
+          worksheetId as string, // they're not undefined
+          tableId
+        )
+          .then(() => {
+            initTables();
+          })
+          .catch((error) => {
+            setLoading(false);
+            setError(
+              new Error(
+                "An exception occurred while deleting the table (Your table might not have been deleted): " +
+                  errorMessage(error) +
+                  "You should refresh at this time."
+              )
+            );
+          });
+      })
+      .catch(() => {
+        // user canceled
+      });
+  };
+
   const handleSelect = (event: SelectChangeEvent) => {
     setTableId(event.target.value as string);
   };
@@ -233,71 +299,7 @@ function ChooseTable() {
             <Button
               disabled={loading || !tableId}
               variant="outlined"
-              onClick={() => {
-                if (!tableId) {
-                  console.error("tableId to be deleted is empty");
-                  return;
-                }
-
-                let tableName = "";
-                for (const table of data) {
-                  if (table.id === tableId) {
-                    tableName = table.name ? table.name : "";
-                    break;
-                  }
-                }
-
-                confirm({
-                  confirmationButtonProps: {
-                    color: "error",
-                  },
-                  confirmationText: "Confirm",
-                  confirmationKeyword: tableName,
-                  confirmationKeywordTextFieldProps: {
-                    variant: "outlined",
-                    label: "Input box",
-                    autoFocus: true,
-                  },
-                  content: (
-                    <Box style={{ margin: "10px 0px" }}>
-                      <Typography style={{ marginBottom: 10 }}>
-                        This will permanently delete the content. Deleted
-                        content cannot be recovered.
-                      </Typography>
-                      <Typography fontWeight="bold">
-                        To confirm, type "{tableName}" in the box below
-                      </Typography>
-                    </Box>
-                  ),
-                })
-                  .then(() => {
-                    setLoading(true);
-                    setError(null);
-                    setTableId("");
-                    deleteTable(
-                      driveId as string, // they're not undefined
-                      itemId as string, // they're not undefined
-                      worksheetId as string, // they're not undefined
-                      tableId
-                    )
-                      .then(() => {
-                        initTables();
-                      })
-                      .catch((error) => {
-                        setLoading(false);
-                        setError(
-                          new Error(
-                            "An exception occurred while deleting the table (Your table might not have been deleted): " +
-                              errorMessage(error) +
-                              "You should refresh at this time."
-                          )
-                        );
-                      });
-                  })
-                  .catch(() => {
-                    // user canceled
-                  });
-              }}
+              onClick={handleDelete}
               color="error"
             >
               Delete

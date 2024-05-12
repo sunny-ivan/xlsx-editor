@@ -136,6 +136,76 @@ function ChooseWorksheet() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // To run the effect only once, set the array empty
 
+  const handleDelete = () => {
+    if (!worksheetId) {
+      console.error("worksheetId to be deleted is empty");
+      return;
+    }
+
+    let worksheetName = "";
+    for (const worksheet of data) {
+      if (worksheet.id === worksheetId) {
+        worksheetName = worksheet.name ? worksheet.name : "";
+        break;
+      }
+    }
+
+    confirm({
+      confirmationButtonProps: {
+        color: "error",
+      },
+      confirmationText: "Confirm",
+      confirmationKeyword: worksheetName,
+      confirmationKeywordTextFieldProps: {
+        variant: "outlined",
+        label: "Input box",
+        autoFocus: true,
+      },
+      content: (
+        <Box style={{ margin: "10px 0px" }}>
+          <Typography style={{ marginBottom: 10 }}>
+            This will permanently delete the content. Deleted content cannot be
+            recovered.
+          </Typography>
+          {data.length <= 1 && (
+            <Typography color="error" style={{ marginBottom: 10 }}>
+              An error may occur when deleting the last worksheet.
+            </Typography>
+          )}
+          <Typography fontWeight="bold">
+            To confirm, type "{worksheetName}" in the box below
+          </Typography>
+        </Box>
+      ),
+    })
+      .then(() => {
+        setLoading(true);
+        setError(null);
+        setWorksheetId("");
+        deleteWorksheet(
+          driveId as string, // they're not undefined
+          itemId as string, // they're not undefined
+          worksheetId
+        )
+          .then(() => {
+            initWorksheets();
+          })
+          .catch((error) => {
+            setLoading(false);
+            setError(
+              new Error(
+                "An exception occurred while deleting the worksheet (Your worksheet might not have been deleted): " +
+                  errorMessage(error) +
+                  "You should refresh at this time."
+              )
+            );
+          });
+      })
+      .catch(() => {
+        // user canceled
+      });
+  };
+
   const handleSelect = (event: SelectChangeEvent) => {
     setWorksheetId(event.target.value as string);
   };
@@ -236,75 +306,7 @@ function ChooseWorksheet() {
             <Button
               disabled={loading || !worksheetId}
               variant="outlined"
-              onClick={() => {
-                if (!worksheetId) {
-                  console.error("worksheetId to be deleted is empty");
-                  return;
-                }
-
-                let worksheetName = "";
-                for (const worksheet of data) {
-                  if (worksheet.id === worksheetId) {
-                    worksheetName = worksheet.name ? worksheet.name : "";
-                    break;
-                  }
-                }
-
-                confirm({
-                  confirmationButtonProps: {
-                    color: "error",
-                  },
-                  confirmationText: "Confirm",
-                  confirmationKeyword: worksheetName,
-                  confirmationKeywordTextFieldProps: {
-                    variant: "outlined",
-                    label: "Input box",
-                    autoFocus: true,
-                  },
-                  content: (
-                    <Box style={{ margin: "10px 0px" }}>
-                      <Typography style={{ marginBottom: 10 }}>
-                        This will permanently delete the content. Deleted
-                        content cannot be recovered.
-                      </Typography>
-                      {data.length <= 1 && (
-                        <Typography color="error" style={{ marginBottom: 10 }}>
-                          An error may occur when deleting the last worksheet.
-                        </Typography>
-                      )}
-                      <Typography fontWeight="bold">
-                        To confirm, type "{worksheetName}" in the box below
-                      </Typography>
-                    </Box>
-                  ),
-                })
-                  .then(() => {
-                    setLoading(true);
-                    setError(null);
-                    setWorksheetId("");
-                    deleteWorksheet(
-                      driveId as string, // they're not undefined
-                      itemId as string, // they're not undefined
-                      worksheetId
-                    )
-                      .then(() => {
-                        initWorksheets();
-                      })
-                      .catch((error) => {
-                        setLoading(false);
-                        setError(
-                          new Error(
-                            "An exception occurred while deleting the worksheet (Your worksheet might not have been deleted): " +
-                              errorMessage(error) +
-                              "You should refresh at this time."
-                          )
-                        );
-                      });
-                  })
-                  .catch(() => {
-                    // user canceled
-                  });
-              }}
+              onClick={handleDelete}
               color="error"
             >
               Delete
