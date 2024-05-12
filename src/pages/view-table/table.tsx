@@ -210,7 +210,7 @@ export default function FullFeaturedCrudGrid(props: IProp) {
   ] as GridColDef[];
 
   // must provide if table editing is enabled
-  const reservedFields = ["actions", "dataGridNo", "index", "dataGridNo"];
+  const reservedFields = ["actions", "dataGridNo", "index", "isNew"];
   let reserveIdField = true;
 
   // Pull data from Microsoft

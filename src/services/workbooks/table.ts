@@ -1,7 +1,7 @@
 import { AddPostRequestBody } from "graph-excel-client/dist/drives/item/items/item/workbook/tables/item/rows/add";
 import excelClient from "./client";
 import { Json } from "graph-excel-client/dist/models";
-import { WorkbookTableRow } from "@microsoft/microsoft-graph-types";
+import { TableRange } from "./table-range";
 
 interface TableColumn {
   id: string; // or column.index.toString()
@@ -10,12 +10,34 @@ interface TableColumn {
 
 type RowFields = { [key: string]: any };
 
+function generateDiff(obj1: RowFields, obj2: RowFields): RowFields {
+  const diff: RowFields = {};
+
+  for (const key in obj1) {
+    if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
+      if (obj1[key] !== obj2[key]) {
+        diff[key] = obj2[key];
+      } else {
+        diff[key] = null;
+      }
+    }
+  }
+
+  for (const key in obj2) {
+    if (obj2.hasOwnProperty(key) && !obj1.hasOwnProperty(key)) {
+      diff[key] = obj2[key];
+    }
+  }
+
+  return diff;
+}
+
 class TableRow {
   private driveId: string;
   private itemId: string;
   private worksheetId: string;
   private tableId: string;
-  public id: string | number;
+  public index: number;
   public cols: TableColumn[]; // {id: column.index.toString(), name: column.name}
   public content: RowFields; // {name: string, userid: number, email: string ...}
 
@@ -24,7 +46,7 @@ class TableRow {
     itemId: string,
     worksheetId: string,
     tableId: string,
-    id: string | number,
+    index: number,
     cols: TableColumn[],
     content: RowFields
   ) {
@@ -32,7 +54,7 @@ class TableRow {
     this.itemId = itemId;
     this.worksheetId = worksheetId;
     this.tableId = tableId;
-    this.id = id;
+    this.index = index;
     this.cols = cols;
     this.content = content;
   }
@@ -76,15 +98,23 @@ class TableRow {
       .items.byDriveItemId(this.itemId)
       .workbook.worksheets.byWorkbookWorksheetId(this.worksheetId)
       .tables.byWorkbookTableId(this.tableId)
-      .rows.byWorkbookTableRowId(this.id.toString());
+      .rows.byWorkbookTableRowId(this.index.toString());
   }
 
   update(newContent: RowFields) {
-    const patchRow: WorkbookTableRow = {
-      index: typeof this.id === "number" ? this.id : undefined,
-      values: [this.fieldsToRowValue(newContent)],
-    };
-    return this.requestBuilder().patch(patchRow);
+    console.log(newContent);
+    const range = new TableRange(
+      this.driveId,
+      this.itemId,
+      this.worksheetId,
+      this.tableId
+    );
+    return range.initialize().then(() => {
+      range.updateRow(
+        this.index,
+        this.fieldsToRowValue(generateDiff(this.content, newContent)) // Only modified values will be updated
+      );
+    });
   }
 
   delete() {
