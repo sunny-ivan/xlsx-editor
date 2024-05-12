@@ -218,8 +218,8 @@ export default function FullFeaturedCrudGrid(props: IProp) {
   let reserveIdField = true;
 
   // Pull data from Microsoft
-  const pullRows = (): Promise<void> => {
-    if (loading) {
+  const pullRows = (pullAnyway?: boolean): Promise<void> => {
+    if (loading && !pullAnyway) {
       return Promise.resolve();
     }
     setLoading(true);
@@ -270,9 +270,9 @@ export default function FullFeaturedCrudGrid(props: IProp) {
 
   useEffect(() => {
     table = tableParent;
-    pullRows();
+    pullRows(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [tableParent]);
 
   const handlerStart = () => {
     setLoading(true);
