@@ -2,7 +2,7 @@ import { useMsal } from "@azure/msal-react";
 import { FileList, Person } from "@microsoft/mgt-react";
 import { createRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createAppFolder, getItemId, getItemUrl } from "../services/drive";
+import { createAppFolder, getItemId } from "../services/drive";
 import ErrorPage from "./error-page";
 import { appdataDirectory } from "../config";
 import {
@@ -12,9 +12,7 @@ import {
   CircularProgress,
   Container,
   IconButton,
-  Link,
   Stack,
-  Typography,
 } from "@mui/material";
 import { DriveItem } from "@microsoft/microsoft-graph-types";
 import CustomHistory from "../utils/history";
@@ -23,9 +21,13 @@ import AddIcon from "@mui/icons-material/Add";
 import CreateFileDialog from "../components/dialogs/create-file-dialog";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useConfirm } from "material-ui-confirm";
-import { getAccount } from "../services/auth/utils";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useSnackbar } from "../provider/snackbar-provider";
+import {
+  OpenIteminNewTabConfirmContent,
+  OpenIteminNewTabConfirmOptions,
+} from "../components/utils/open-item-in-new-tab";
+import { errorMessage } from "../utils/error";
 
 const history = new CustomHistory();
 
@@ -119,67 +121,30 @@ function ChooseFile() {
     console.log(item);
   };
 
-  const handleOpeninNewTab = () => {
-    let username = "";
-    setOpenBackdrop(true);
-    new Promise<void>((resolve, _reject) => {
-      getAccount()
-        .then((account) => {
-          username = account.username || "this account";
-          resolve();
-        })
-        .catch(() => {
-          username = "this account";
-          resolve();
-        });
-    })
-      .then(() => {
-        return getItemUrl(directoryId);
-      })
-      .then((response) => {
-        return response && typeof response.value === "string"
-          ? response.value
-          : // eslint-disable-next-line no-script-url
-            "javascript:void(0);";
-      })
-      .then((url: string) => {
+  const handleOpeninNewTab = async () => {
+    try {
+      setOpenBackdrop(true);
+      const content = await OpenIteminNewTabConfirmContent(directoryId);
+      if (!content) {
         setOpenBackdrop(false);
-        return confirm({
-          title: "",
-          confirmationButtonProps: {
-            style: {
-              display: "none",
-            },
-          },
-          cancellationText: "Close",
-          content: (
-            <Box style={{ margin: "10px 0px" }}>
-              <Typography>
-                <Link href={url} target="_blank" rel="noopener noreferrer">
-                  Click here
-                </Link>{" "}
-                to open the folder in a new tab? You need to be logged in as{" "}
-                <Box
-                  component="strong"
-                  display="inline"
-                  children={username}
-                ></Box>{" "}
-                to access this folder.
-              </Typography>
-            </Box>
-          ),
-        });
-      })
-      .then(() => {
-        // openned successfully
-      })
-      .catch((error) => {
+        return;
+      }
+      setOpenBackdrop(false);
+      await confirm({ ...OpenIteminNewTabConfirmOptions, content });
+    } catch (error) {
+      if (error === undefined) {
+        // user cancelled
         setOpenBackdrop(false);
-        if (error === undefined) {
-          // user closed
-          return;
-        }
+        return;
+      }
+      snackbar.openSnackbar({
+        message: errorMessage(error),
+        open: true,
+        severity: "error",
+        snackbarProps: { autoHideDuration: 5000 },
       });
+      setOpenBackdrop(false);
+    }
   };
 
   const handleRefresh = () => {
