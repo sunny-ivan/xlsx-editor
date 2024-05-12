@@ -417,7 +417,6 @@ export default function FullFeaturedCrudGrid(props: IProp) {
     () => {
       console.log("params", params);
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-      saveEditedRow(id);
     };
 
   const handleDeleteClick = (id: GridRowId) => () => {
