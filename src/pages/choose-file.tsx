@@ -25,6 +25,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useConfirm } from "material-ui-confirm";
 import { getAccount } from "../services/auth/utils";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { useSnackbar } from "../provider/SnackbarProvider";
 
 const history = new CustomHistory();
 
@@ -32,6 +33,7 @@ function ChooseFile() {
   const { instance: pca } = useMsal();
   const navigate = useNavigate();
   const confirm = useConfirm();
+  const snackbar = useSnackbar();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -180,6 +182,18 @@ function ChooseFile() {
       });
   };
 
+  const handleRefresh = () => {
+    // TODO: implement reloading
+    snackbar.openSnackbar({
+      message: "Function not implemented.",
+      severity: "error",
+      open: true,
+      snackbarProps: {
+        autoHideDuration: 5000,
+      },
+    });
+  };
+
   return (
     <Container maxWidth="sm">
       <Person personQuery="me" view="twolines" personCardInteraction="click" />
@@ -206,12 +220,7 @@ function ChooseFile() {
             >
               <AddIcon />
             </IconButton>
-            <IconButton
-              aria-label="refresh"
-              onClick={() => {
-                // TODO: implement reloading
-              }}
-            >
+            <IconButton aria-label="refresh" onClick={handleRefresh}>
               <RefreshIcon />
             </IconButton>
             <IconButton
