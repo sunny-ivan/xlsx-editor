@@ -78,17 +78,7 @@ export default function CreateFileDialog(props: IProps) {
         File
       </DialogTitle>
       <DialogContent dividers>
-        {error && (
-          <Alert severity="error">
-            {errorMessage(error) +
-              // if error has errorEscaped
-              (Object.prototype.hasOwnProperty.call(error, "errorEscaped") &&
-              (error as any).errorEscaped
-                ? // get error code
-                  " (" + (error as any).errorEscaped.code + ")"
-                : "")}
-          </Alert>
-        )}
+        {error && <Alert severity="error">{errorMessage(error)}</Alert>}
         <FormControl fullWidth style={{ marginTop: 20 }}>
           <TextField
             id="drive-fileitem-create-input"
