@@ -158,7 +158,11 @@ export class Table {
       .items.byDriveItemId(this.itemId)
       .workbook.worksheets.byWorkbookWorksheetId(this.worksheetId)
       .tables.byWorkbookTableId(this.tableId)
-      .columns.get();
+      .columns.get({
+        queryParameters: {
+          select: ["id", "index", "name"],
+        },
+      });
     if (!response?.value) {
       throw new Error("Response or its value is undefined");
     }
