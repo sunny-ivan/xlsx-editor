@@ -25,6 +25,8 @@ export interface IProps {
 }
 
 function rangeAddressPartMaches(value: string) {
+  // This support is not yet available
+  // const res = /^[A-Z]+(?:[1-9]+[0-9]*)*$/.test(value);
   const res = /^[A-Z]+[1-9]+[0-9]*$/.test(value);
   console.log(value, res);
   return res;
